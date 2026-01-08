@@ -1,0 +1,581 @@
+/* MultiSelectToolbar.css - 多选工具条样式 */
+
+.multi-select-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 4px;
+}
+
+.toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar-section:last-child {
+    border-right: none;
+}
+
+.section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1890ff;
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+.type-hint {
+    font-size: 11px;
+    color: #999;
+    margin-left: 4px;
+}
+
+.section-title {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.toolbar-buttons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: white;
+    color: #333;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.toolbar-btn:hover {
+    background: #e6f7ff;
+    border-color: #1890ff;
+    color: #1890ff;
+}
+
+.toolbar-btn:active {
+    background: #bae7ff;
+}
+
+.toolbar-btn:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #bfbfbf;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.toolbar-btn:disabled:hover {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #bfbfbf;
+}
+
+.toolbar-btn.active {
+    background: #1890ff;
+    border-color: #1890ff;
+    color: white;
+}
+
+.toolbar-btn svg {
+    flex-shrink: 0;
+}
+
+.toolbar-btn.btn-clear {
+    background: #fff;
+    border-color: #ff7875;
+    color: #ff4d4f;
+}
+
+.toolbar-btn.btn-clear:hover {
+    background: #fff1f0;
+    border-color: #ff4d4f;
+}
+
+.toolbar-btn.btn-delete {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #fff;
+    border-color: #d9d9d9;
+    color: #333;
+}
+
+.toolbar-btn.btn-delete:hover:not(:disabled) {
+    background: #fff1f0;
+    border-color: #ff4d4f;
+    color: #ff4d4f;
+}
+
+.toolbar-btn.btn-delete:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #bfbfbf;
+}
+
+.separator {
+    width: 1px;
+    height: 20px;
+    background: #e8e8e8;
+    margin: 0 4px;
+}
+
+.toolbar-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toolbar-control-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+.toolbar-control-item span {
+    font-size: 12px;
+    color: #666;
+}
+
+.toolbar-control-item input[type="number"] {
+    width: 56px;
+    height: 26px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+    margin: 0 ;
+    padding: 0;
+}
+
+.toolbar-control-item input[type="number"]:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.toolbar-control-item input[type="color"] {
+    width: 28px;
+    height: 26px;
+    padding: 2px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.toolbar-control-item input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.toolbar-control-item input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.toolbar-control-item input:disabled,
+.toolbar-control-item select:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #bfbfbf;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.toolbar-control-item select {
+    height: 26px;
+    padding: 2px 8px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    cursor: pointer;
+}
+
+.toolbar-control-item select:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* 颜色输入组 */
+.color-input-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.btn-clear-sm {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+    color: #999;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.btn-clear-sm:hover:not(:disabled) {
+    background: #fff1f0;
+    border-color: #ff4d4f;
+    color: #ff4d4f;
+}
+
+.btn-clear-sm:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #d9d9d9;
+    cursor: not-allowed;
+}
+
+/* 响应式布局 */
+@media (max-width: 1400px) {
+    .multi-select-toolbar {
+        gap: 4px;
+        padding: 8px 12px;
+    }
+
+    .toolbar-section {
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .section-title {
+        display: none;
+    }
+}
+
+/* 控件下拉菜单按钮 */
+.toolbar-dropdown-btn {
+    gap: 4px;
+    padding: 0 8px;
+}
+
+.dropdown-arrow {
+    font-size: 8px;
+    color: #999;
+    margin-left: 2px;
+}
+
+/* 控件下拉菜单 */
+.toolbar-dropdown-menu {
+    position: fixed;
+    margin-top: 4px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    z-index: 10000;
+    min-width: 160px;
+    padding: 4px 0;
+}
+
+.control-dropdown {
+    min-width: 180px;
+}
+
+.dropdown-category {
+    padding: 4px 0;
+}
+
+.category-title {
+    padding: 6px 12px 4px;
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.dropdown-item:hover {
+    background: #e6f7ff;
+}
+
+.item-icon {
+    width: 24px;
+    font-size: 14px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.item-name {
+    font-size: 13px;
+    color: #333;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e8e8e8;
+    margin: 4px 0;
+}
+
+/* 保持下拉菜单父元素的相对定位 */
+.toolbar-section {
+    position: relative;
+}
+
+/* 数据字段弹窗 */
+.field-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.field-modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    width: 520px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.field-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.field-modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.modal-close-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.modal-close-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.field-modal-body {
+    padding: 16px 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.field-group {
+    margin-bottom: 16px;
+}
+
+.field-group:last-child {
+    margin-bottom: 0;
+}
+
+.field-group-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.field-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.field-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 0 0 calc(50% - 4px);
+    box-sizing: border-box;
+}
+
+.field-item:hover {
+    border-color: #1890ff;
+    background: #e6f7ff;
+}
+
+.field-item.selected {
+    border-color: #1890ff;
+    background: #e6f7ff;
+}
+
+.field-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.field-label {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+
+.field-name {
+    font-size: 11px;
+    color: #999;
+    margin-left: auto;
+}
+
+.field-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid #e8e8e8;
+    background: #fafafa;
+    border-radius: 0 0 8px 8px;
+}
+
+.arrangement-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+.arrangement-options label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.arrangement-options input[type="radio"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-buttons .btn {
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.modal-buttons .btn-cancel {
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    color: #666;
+}
+
+.modal-buttons .btn-cancel:hover {
+    border-color: #40a9ff;
+    color: #40a9ff;
+}
+
+.modal-buttons .btn-confirm {
+    border: 1px solid #1890ff;
+    background: #1890ff;
+    color: #fff;
+}
+
+.modal-buttons .btn-confirm:hover {
+    background: #40a9ff;
+    border-color: #40a9ff;
+}
+
+.modal-buttons .btn-confirm:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #bfbfbf;
+    cursor: not-allowed;
+}
+
+/* 主要按钮样式 */
+.toolbar-btn.btn-primary {
+    background: #1890ff;
+    border-color: #1890ff;
+    color: #fff;
+}
+
+.toolbar-btn.btn-primary:hover {
+    background: #40a9ff;
+    border-color: #40a9ff;
+}

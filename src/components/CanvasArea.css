@@ -1,0 +1,118 @@
+/* CanvasArea.css 新增样式 */
+
+/* 框选矩形 */
+.selection-rect {
+    box-sizing: border-box;
+}
+
+/* 选中对象边框 */
+.selected-object-border {
+    box-sizing: border-box;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% {
+        border-color: #4d90fe;
+    }
+    50% {
+        border-color: rgba(77, 144, 254, 0.5);
+    }
+    100% {
+        border-color: #4d90fe;
+    }
+}
+
+/* 画布导航栏增强 */
+.canvas-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.keyboard-hint {
+    font-size: 12px;
+    color: #666;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+
+/* 画布光标 */
+.canvas-container.selecting {
+    cursor: crosshair !important;
+}
+
+.canvas-container.moving {
+    cursor: move !important;
+}
+
+/* 快捷键提示 */
+.shortcut-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 12px;
+    z-index: 3000;
+}
+
+.shortcut-hint kbd {
+    background: #333;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin: 0 2px;
+    font-family: monospace;
+}
+
+/* 富文本内容渲染样式 */
+.rich-text-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.rich-text-content p {
+    margin: 0 0 0.3em 0;
+}
+
+.rich-text-content p:last-child {
+    margin-bottom: 0;
+}
+
+.rich-text-content ul,
+.rich-text-content ol {
+    margin: 0.3em 0;
+    padding-left: 1.2em;
+}
+
+.rich-text-content li {
+    margin: 0.1em 0;
+}
+
+.rich-text-content b,
+.rich-text-content strong {
+    font-weight: bold;
+}
+
+.rich-text-content i,
+.rich-text-content em {
+    font-style: italic;
+}
+
+.rich-text-content u {
+    text-decoration: underline;
+}
+
+.rich-text-content strike,
+.rich-text-content s {
+    text-decoration: line-through;
+}

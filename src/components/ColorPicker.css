@@ -1,0 +1,153 @@
+/* ColorPicker.css - 颜色选择组件样式 */
+
+.color-picker {
+    position: relative;
+    display: inline-flex;
+}
+
+.color-picker.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 颜色预览按钮 */
+.color-preview-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.color-preview-btn:hover {
+    border-color: #1890ff;
+}
+
+.color-picker.disabled .color-preview-btn {
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
+
+.color-swatch {
+    width: 24px;
+    height: 20px;
+    border-radius: 2px;
+    border: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-color-icon {
+    font-size: 18px;
+    color: #999;
+}
+
+.dropdown-arrow {
+    display: flex;
+    align-items: center;
+    color: #999;
+    margin-left: 2px;
+}
+
+/* 颜色选择面板 */
+.color-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    width: 190px;
+}
+
+/* 预设颜色网格 */
+.preset-colors {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.color-item {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+}
+
+.color-item:hover {
+    transform: scale(1.1);
+    border-color: #1890ff;
+}
+
+.color-item.active {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.3);
+}
+
+/* 清除颜色按钮 */
+.color-item.clear-color {
+    background: #fff !important;
+    border: 1px solid #d9d9d9 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-item.clear-color::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 2px;
+    background: #ff4d4f;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 50%;
+    margin-left: -15px;
+    margin-top: -1px;
+}
+
+.color-item.clear-color:hover {
+    border-color: #ff4d4f !important;
+}
+
+.clear-icon {
+    display: none;
+}
+
+/* 自定义颜色按钮 */
+.custom-color-row {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 8px;
+}
+
+.btn-custom-color {
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fafafa;
+    color: #666;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-custom-color:hover {
+    background: #e6f7ff;
+    border-color: #1890ff;
+    color: #1890ff;
+}

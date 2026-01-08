@@ -1,0 +1,734 @@
+/* BandBoundaryDesigner.css */
+.react-band-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #f0f0f0;
+}
+
+.btn-primary {
+  background: #4d90fe;
+  color: white;
+  border-color: #357ae8;
+}
+
+.btn-primary:hover {
+  background: #357ae8;
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  color: white;
+  border-color: #ff5252;
+}
+
+.btn-danger:hover {
+  background: #ff5252;
+}
+
+.btn-small {
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* 工作区 */
+.workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 控件面板 */
+.control-panel {
+  width: 155px;
+  background: #fafafa;
+  border-right: 1px solid #ddd;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.control-panel h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-group h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.control-list {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 48px;
+  font-size: 12px;
+  padding: 8px;
+}
+
+.control-item:hover {
+  border-color: #4d90fe;
+  background: #f0f7ff;
+}
+
+.control-icon {
+  width: 24px;
+  height: 24px;
+  background: #4d90fe;
+  color: white;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.data-fields-panel {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panel-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-item {
+  padding: 6px 10px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  margin-bottom: 6px;
+}
+.field-item:last-child{
+  margin-bottom: 0;
+}
+.field-item:hover {
+  border-color: #4d90fe;
+  background: #f0f7ff;
+}
+
+/* 字段分组样式 */
+.field-group {
+  margin-bottom: 12px;
+}
+
+.field-group:last-child {
+  margin-bottom: 0;
+}
+
+.field-group-title {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  padding: 4px 0;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+
+.field-item.detail-field {
+  background: #fff8e6;
+  border-color: #ffd666;
+}
+
+.field-item.detail-field:hover {
+  background: #fff2cc;
+  border-color: #faad14;
+}
+
+/* 设计区域 */
+.design-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f9f9f9;
+}
+
+.canvas-nav {
+  padding: 10px 20px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.position-info,
+.selected-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.canvas-wrapper {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 网格层 */
+.grid-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* 边界线层 */
+.boundary-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: auto;
+}
+
+.boundary-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  cursor: ns-resize;
+  z-index: 100;
+}
+
+.boundary-line:hover,
+.boundary-line.dragging {
+  background-color: #666 !important;
+}
+
+.boundary-label {
+  position: absolute;
+  left: 10px;
+  top: -20px;
+  background: inherit;
+  color: white;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+/* 带区层 */
+.band-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.band-placeholder {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #999,
+    #999 5px,
+    transparent 5px,
+    transparent 10px
+  );
+  cursor: pointer;
+}
+
+.band-placeholder:hover {
+  background: #ff6b6b !important;
+}
+
+.band-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* border: 1px dashed; */
+  box-sizing: border-box;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0.85;
+  transition: all 0.3s;
+}
+
+.band-area:hover,
+.band-area.selected {
+  opacity: 0.95;
+  /* border-style: solid !important; */
+}
+
+.band-area.selected {
+  border-color: #ff6b6b !important;
+}
+
+.band-label {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  font-size: 12px;
+  color: #333;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+/* 对象层 */
+.object-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.design-object {
+  position: absolute;
+  cursor: move;
+  user-select: none;
+}
+
+
+/* 带区控制 */
+.band-controls {
+  padding: 10px 20px;
+  background: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.band-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.band-name {
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.band-height {
+  min-width: 50px;
+  text-align: right;
+  color: #666;
+}
+
+/* 属性面板 */
+.property-panel {
+  width: 300px;
+  background: #fafafa;
+  border-left: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.property-panel h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.property-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.property-group {
+  /* background: white; */
+  border: 1px solid #eee;
+  /* border-radius: 4px; */
+}
+
+.property-group h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.property-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.property-row:last-child {
+  margin-bottom: 0;
+}
+
+.property-row label {
+  font-size: 14px;
+  color: #666;
+  min-width: 80px;
+}
+
+.property-row input[type='text'],
+.property-row input[type='number'] {
+  width: 150px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.property-row input[type='color'] {
+  width: 50px;
+  height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* 颜色输入包装器 */
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-clear-color {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #999;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-clear-color:hover {
+  background: #fff1f0;
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+.property-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.property-value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.property-actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.empty-state {
+  color: #999;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-state p {
+  margin: 10px 0 0 0;
+}
+
+/* 状态栏 */
+.status-bar {
+  padding: 8px 20px;
+  background: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  gap: 30px;
+  font-size: 13px;
+  color: #666;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-item span:first-child {
+  font-weight: 500;
+  color: #333;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .canvas-container {
+    width: 600px;
+    height: 900px;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    flex-direction: column;
+  }
+
+  .control-panel {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .property-panel {
+    width: 100%;
+    height: 300px;
+    border-left: none;
+    border-top: 1px solid #ddd;
+  }
+
+  .canvas-container {
+    width: 100%;
+    height: 600px;
+  }
+}
+
+.band-area.dragging {
+  /* box-shadow: 0 0 10px rgba(255, 107, 107, 0.5); */
+  transition: all 0.1s ease;
+}
+
+/* .band-area.dragging .band-label {
+  background: #ff6b6b;
+  color: white;
+} */
+
+.band-object-count {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 3px;
+  color: #666;
+}
+
+
+.boundary-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background-color: #f3f3f3;
+  cursor: ns-resize;
+  z-index: 1000;
+  transition: background-color 0.2s ease;
+  border-top: 1px solid #aeadad;
+  border-bottom: 1px solid #aeadad;
+}
+
+.boundary-label {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(0, -50%);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #c3c3c3;
+  white-space: nowrap;
+  background: transparent;
+}
+
+
+/* 文本内容包装器样式 */
+.text-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.text-content {
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: hidden;
+    width: 100%;
+}
+
+
+/* BandBoundaryDesigner.css 新增样式 */
+
+/* 多选信息面板 */
+.multi-selection-info {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border-left: 3px solid #4d90fe;
+}
+
+.multi-selection-info p {
+    margin: 5px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.multi-selection-info .btn-small {
+    margin-top: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+/* 状态栏增强 */
+.status-bar .status-item:last-child {
+    color: #4d90fe;
+    font-weight: bold;
+}
+
+/* 工具栏提示 */
+.toolbar .selected-count {
+    background: #4d90fe;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+/* 带区控制区域 */
+.band-controls {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* 对象聚焦闪烁效果 */
+@keyframes object-focus-blink {
+    0%, 100% {
+        outline: 2px solid #4d90fe;
+        outline-offset: 2px;
+        box-shadow: 0 0 8px rgba(77, 144, 254, 0.6);
+    }
+    50% {
+        outline: 2px solid #ff9800;
+        outline-offset: 2px;
+        box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+    }
+}
+
+.object-focus-blink {
+    animation: object-focus-blink 0.5s ease-in-out 3;
+    z-index: 9999 !important;
+}

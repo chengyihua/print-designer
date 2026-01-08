@@ -1,0 +1,588 @@
+/* ObjectPropertyPanel.css - 专业属性面板样式 */
+
+/* ==================== 面板容器 ==================== */
+.property-panel {
+  width: 300px;
+  background: linear-gradient(180deg, #fafbfc 0%, #f6f8fa 100%);
+  border-left: 1px solid #e1e4e8;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ==================== 面板头部 ==================== */
+.property-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.property-panel-header .type-icon {
+  width: 36px;
+  height: 36px;
+  background: #4d90fe;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.property-panel-header .type-info {
+  flex: 1;
+}
+
+.property-panel-header .type-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #24292e;
+  margin: 0 0 2px 0;
+}
+
+.property-panel-header .type-id {
+  font-size: 11px;
+  color: #6a737d;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+/* ==================== 可滚动内容区 ==================== */
+.property-editor {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.property-editor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.property-editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.property-editor::-webkit-scrollbar-thumb {
+  background: #d1d5da;
+  border-radius: 3px;
+}
+
+.property-editor::-webkit-scrollbar-thumb:hover {
+  background: #959da5;
+}
+
+/* ==================== 属性分组 ==================== */
+.property-group {
+  background: #fff;
+  border: 1px solid #e1e4e8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.property-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, #fafbfc 0%, #f6f8fa 100%);
+  border-bottom: 1px solid #e1e4e8;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.property-group-header:hover {
+  background: linear-gradient(180deg, #f3f4f6 0%, #ebedf0 100%);
+}
+
+.property-group-header h4 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #24292e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.property-group-header h4::before {
+  content: '';
+  width: 3px;
+  height: 12px;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.property-group-header .collapse-icon {
+  font-size: 10px;
+  color: #6a737d;
+  transition: transform 0.2s ease;
+}
+
+.property-group-header .collapse-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.property-group-content {
+  padding: 12px;
+}
+
+.property-group-content.collapsed {
+  display: none;
+}
+
+/* ==================== 属性行 ==================== */
+.property-panel .property-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.property-panel .property-row:last-child {
+  margin-bottom: 0;
+}
+
+.property-panel .property-row label {
+  font-size: 13px;
+  color: #586069;
+  width: 72px;
+  flex-shrink: 0;
+}
+
+.property-panel .property-row .property-value {
+  font-size: 13px;
+  color: #24292e;
+  font-weight: 500;
+  padding: 6px 10px;
+  background: #f6f8fa;
+  border-radius: 4px;
+  flex: 1;
+}
+
+/* ==================== 输入框样式 ==================== */
+.property-panel .property-row input[type='text'],
+.property-panel .property-row textarea {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #d1d5da;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #24292e;
+  background: #fff;
+  outline: none;
+  min-width: 0;
+}
+
+.property-panel .property-row input[type='number'] {
+ flex:1;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid #d1d5da;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #24292e;
+  background: #fff;
+  outline: none;
+}
+
+.property-panel .property-row input:hover,
+.property-panel .property-row textarea:hover,
+.property-panel .property-row select:hover {
+  border-color: #0366d6;
+}
+
+.property-panel .property-row input:focus,
+.property-panel .property-row textarea:focus,
+.property-panel .property-row select:focus {
+  border-color: #0366d6;
+  box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.1);
+}
+
+.property-panel .property-row input:disabled {
+  background: #f6f8fa;
+  color: #6a737d;
+  cursor: not-allowed;
+}
+
+/* ==================== 下拉框样式 ==================== */
+.property-panel .property-row select {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #d1d5da;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #24292e;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  min-width: 0;
+}
+
+/* ==================== 复选框样式 ==================== */
+.property-panel .property-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #0366d6;
+  flex-shrink: 0;
+}
+
+.property-panel .checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* flex: 1; */
+}
+
+.property-panel .checkbox-wrapper .checkbox-label {
+  font-size: 12px;
+  color: #586069;
+}
+
+/* ==================== 颜色选择器 ==================== */
+.property-panel .color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.property-panel .property-row input[type='color'] {
+  width: 36px;
+  height: 32px;
+  border: 1px solid #d1d5da;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.property-panel .property-row input[type='color']:hover {
+  border-color: #0366d6;
+}
+
+.property-panel .color-value {
+  font-size: 11px;
+  color: #6a737d;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  background: #f6f8fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.property-panel .btn-clear-color {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #d1d5da;
+  border-radius: 6px;
+  background: #fff;
+  color: #6a737d;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.property-panel .btn-clear-color:hover {
+  background: #ffeef0;
+  border-color: #d73a49;
+  color: #d73a49;
+}
+
+/* ==================== 按钮样式 ==================== */
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #0366d6 0%, #0256b9 100%);
+  color: #fff;
+  border-color: #0256b9;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #0256b9 0%, #044289 100%);
+}
+
+.btn-secondary {
+  background: #f6f8fa;
+  color: #24292e;
+  border-color: #d1d5da;
+}
+
+.btn-secondary:hover {
+  background: #e1e4e8;
+}
+
+/* ==================== 对齐按钮组 ==================== */
+.alignment-buttons {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.alignment-btn {
+  flex: 1;
+  height: 32px;
+  border: 1px solid #d1d5da;
+  border-radius: 6px;
+  background: #fff;
+  color: #6a737d;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.alignment-btn:hover {
+  border-color: #0366d6;
+  color: #0366d6;
+}
+
+.alignment-btn.active {
+  background: linear-gradient(180deg, #0366d6 0%, #0256b9 100%);
+  border-color: #0256b9;
+  color: #fff;
+}
+
+/* ==================== 内边距输入组 ==================== */
+.padding-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex: 1;
+}
+
+.padding-input-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.padding-input-item .padding-label {
+  font-size: 11px;
+  color: #6a737d;
+  min-width: 16px;
+}
+
+.padding-inputs input {
+  width: 50px !important;
+  text-align: center;
+  padding: 4px 6px !important;
+  font-size: 12px;
+}
+
+.padding-hint {
+  display: none;
+}
+
+/* ==================== 层级控制 ==================== */
+.zindex-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.zindex-controls input {
+  width: 60px !important;
+}
+
+.zindex-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  border: 1px solid #d1d5da;
+  border-radius: 4px;
+  background: #f6f8fa;
+  color: #586069;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.zindex-btn:hover {
+  background: #e1e4e8;
+  border-color: #959da5;
+}
+
+/* ==================== 图片预览 ==================== */
+.image-preview-container {
+  width: 100%;
+  height: 80px;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6f8fa;
+  margin-top: 8px;
+}
+
+.image-preview-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ==================== 文件上传按钮 ==================== */
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, #0366d6 0%, #0256b9 100%);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.file-upload-btn:hover {
+  background: linear-gradient(180deg, #0256b9 0%, #044289 100%);
+}
+
+.file-clear-btn {
+  padding: 6px 10px;
+  background: #fff;
+  color: #d73a49;
+  border: 1px solid #d73a49;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.file-clear-btn:hover {
+  background: #ffeef0;
+}
+
+/* ==================== 公式编辑按钮 ==================== */
+.formula-input-wrapper {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.formula-input-wrapper input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-edit-formula {
+  padding: 6px 12px;
+  background: linear-gradient(180deg, #28a745 0%, #22863a 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-edit-formula:hover {
+  background: linear-gradient(180deg, #22863a 0%, #176f2c 100%);
+}
+
+/* ==================== 删除操作区 ==================== */
+.property-actions {
+  padding: 12px;
+  background: #fff;
+  border-top: 1px solid #e1e4e8;
+  flex-shrink: 0;
+}
+
+.btn-danger {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(180deg, #d73a49 0%, #cb2431 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(180deg, #cb2431 0%, #9e1c23 100%);
+}
+
+.btn-danger::before {
+  content: '🗑';
+  font-size: 14px;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #6a737d;
+  text-align: center;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ==================== 响应式适配 ==================== */
+@media (max-width: 1200px) {
+  .property-panel {
+    width: 280px;
+  }
+}
+
+@media (max-width: 900px) {
+  .property-panel {
+    width: 100%;
+    height: 300px;
+    border-left: none;
+    border-top: 1px solid #e1e4e8;
+  }
+}

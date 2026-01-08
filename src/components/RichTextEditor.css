@@ -1,0 +1,122 @@
+/* RichTextEditor.css */
+
+.rich-text-editor {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    /* overflow: hidden; */
+    background: #fff;
+}
+
+/* 工具栏 */
+.rte-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 6px;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.rte-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: #333;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.rte-btn:hover {
+    background: #e6f7ff;
+    border-color: #91d5ff;
+}
+
+.rte-btn:active {
+    background: #bae7ff;
+}
+
+.rte-select {
+    height: 26px;
+    min-width: 80px !important;
+    padding: 0 6px !important;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.rte-select:focus {
+    outline: none;
+    border-color: #1890ff;
+}
+
+.rte-color {
+    width: 26px;
+    height: 26px;
+    padding: 2px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.rte-color::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.rte-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.rte-separator {
+    width: 1px;
+    height: 20px;
+    margin: 0 4px;
+    background: #e8e8e8;
+}
+
+/* 编辑区域 */
+.rte-content {
+    padding: 8px 10px;
+    min-height: 120px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    outline: none;
+}
+
+.rte-content:empty::before {
+    content: attr(data-placeholder);
+    color: #bfbfbf;
+    pointer-events: none;
+}
+
+.rte-content:focus {
+    background: #fafafa;
+}
+
+/* 内容样式 */
+.rte-content p {
+    margin: 0 0 0.5em 0;
+}
+
+.rte-content ul,
+.rte-content ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+.rte-content li {
+    margin: 0.25em 0;
+}

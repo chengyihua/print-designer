@@ -1,0 +1,815 @@
+{
+  "customer": "某某科技有限公司",
+  "invoiceNo": "INV20230001",
+  "date": "2023-10-01",
+  "products": [
+    {
+      "name": "笔记本电脑",
+      "spec": "i7/16GB/512GB",
+      "unit": "台",
+      "quantity": 5,
+      "price": 2081,
+      "amount": 10405
+    },
+    {
+      "name": "显示器",
+      "spec": "27英寸 4K",
+      "unit": "套",
+      "quantity": 2,
+      "price": 1901,
+      "amount": 3802
+    },
+    {
+      "name": "键盘鼠标套装",
+      "spec": "无线",
+      "unit": "把",
+      "quantity": 10,
+      "price": 804,
+      "amount": 8040
+    },
+    {
+      "name": "办公椅",
+      "spec": "人体工学",
+      "unit": "个",
+      "quantity": 3,
+      "price": 2695,
+      "amount": 8085
+    },
+    {
+      "name": "文件柜",
+      "spec": "三层",
+      "unit": "件",
+      "quantity": 2,
+      "price": 2545,
+      "amount": 5090
+    },
+    {
+      "name": "打印机",
+      "spec": "黑白激光",
+      "unit": "箱",
+      "quantity": 10,
+      "price": 421,
+      "amount": 4210
+    },
+    {
+      "name": "扫描仪",
+      "spec": "A4平板",
+      "unit": "组",
+      "quantity": 7,
+      "price": 3859,
+      "amount": 27013
+    },
+    {
+      "name": "投影仪",
+      "spec": "1080P",
+      "unit": "条",
+      "quantity": 10,
+      "price": 4168,
+      "amount": 41680
+    },
+    {
+      "name": "白板",
+      "spec": "1.2x2.4m",
+      "unit": "张",
+      "quantity": 2,
+      "price": 722,
+      "amount": 1444
+    },
+    {
+      "name": "碎纸机",
+      "spec": "CD级别",
+      "unit": "只",
+      "quantity": 1,
+      "price": 318,
+      "amount": 318
+    },
+    {
+      "name": "路由器",
+      "spec": "千兆",
+      "unit": "台",
+      "quantity": 8,
+      "price": 1954,
+      "amount": 15632
+    },
+    {
+      "name": "交换机",
+      "spec": "24口",
+      "unit": "套",
+      "quantity": 8,
+      "price": 776,
+      "amount": 6208
+    },
+    {
+      "name": "服务器",
+      "spec": "2U机架式",
+      "unit": "把",
+      "quantity": 7,
+      "price": 4778,
+      "amount": 33446
+    },
+    {
+      "name": "硬盘",
+      "spec": "2TB SATA",
+      "unit": "个",
+      "quantity": 6,
+      "price": 4382,
+      "amount": 26292
+    },
+    {
+      "name": "内存条",
+      "spec": "DDR4 8GB",
+      "unit": "件",
+      "quantity": 5,
+      "price": 4165,
+      "amount": 20825
+    },
+    {
+      "name": "CPU",
+      "spec": "Intel i5-12400F",
+      "unit": "箱",
+      "quantity": 4,
+      "price": 3779,
+      "amount": 15116
+    },
+    {
+      "name": "显卡",
+      "spec": "RTX 3060",
+      "unit": "组",
+      "quantity": 10,
+      "price": 3238,
+      "amount": 32380
+    },
+    {
+      "name": "主板",
+      "spec": "Z790芯片组",
+      "unit": "条",
+      "quantity": 10,
+      "price": 2879,
+      "amount": 28790
+    },
+    {
+      "name": "电源",
+      "spec": "650W金牌",
+      "unit": "张",
+      "quantity": 10,
+      "price": 930,
+      "amount": 9300
+    },
+    {
+      "name": "机箱",
+      "spec": "ATX中塔",
+      "unit": "只",
+      "quantity": 10,
+      "price": 1401,
+      "amount": 14010
+    },
+    {
+      "name": "显示器支架",
+      "spec": "铝合金双臂",
+      "unit": "台",
+      "quantity": 4,
+      "price": 3132,
+      "amount": 12528
+    },
+    {
+      "name": "笔记本支架",
+      "spec": "可折叠",
+      "unit": "套",
+      "quantity": 1,
+      "price": 4510,
+      "amount": 4510
+    },
+    {
+      "name": "USB集线器",
+      "spec": "7口USB3.0",
+      "unit": "把",
+      "quantity": 6,
+      "price": 3357,
+      "amount": 20142
+    },
+    {
+      "name": "网线",
+      "spec": "超五类",
+      "unit": "个",
+      "quantity": 6,
+      "price": 2409,
+      "amount": 14454
+    },
+    {
+      "name": "光纤跳线",
+      "spec": "单模LC",
+      "unit": "件",
+      "quantity": 2,
+      "price": 473,
+      "amount": 946
+    },
+    {
+      "name": "办公桌",
+      "spec": "1.6m x 0.8m",
+      "unit": "箱",
+      "quantity": 2,
+      "price": 1303,
+      "amount": 2606
+    },
+    {
+      "name": "会议桌",
+      "spec": "3m x 1.2m",
+      "unit": "组",
+      "quantity": 4,
+      "price": 4743,
+      "amount": 18972
+    },
+    {
+      "name": "茶几",
+      "spec": "玻璃钢化",
+      "unit": "条",
+      "quantity": 10,
+      "price": 2428,
+      "amount": 24280
+    },
+    {
+      "name": "书架",
+      "spec": "四层",
+      "unit": "张",
+      "quantity": 3,
+      "price": 2088,
+      "amount": 6264
+    },
+    {
+      "name": "储物柜",
+      "spec": "双门",
+      "unit": "只",
+      "quantity": 10,
+      "price": 5086,
+      "amount": 50860
+    },
+    {
+      "name": "空调",
+      "spec": "1.5匹变频",
+      "unit": "台",
+      "quantity": 4,
+      "price": 4841,
+      "amount": 19364
+    },
+    {
+      "name": "空气净化器",
+      "spec": "HEPA过滤",
+      "unit": "套",
+      "quantity": 8,
+      "price": 3496,
+      "amount": 27968
+    },
+    {
+      "name": "加湿器",
+      "spec": "5L容量",
+      "unit": "把",
+      "quantity": 6,
+      "price": 4534,
+      "amount": 27204
+    },
+    {
+      "name": "饮水机",
+      "spec": "台式",
+      "unit": "个",
+      "quantity": 10,
+      "price": 3616,
+      "amount": 36160
+    },
+    {
+      "name": "微波炉",
+      "spec": "20L",
+      "unit": "件",
+      "quantity": 7,
+      "price": 191,
+      "amount": 1337
+    },
+    {
+      "name": "电话机",
+      "spec": "无绳电话",
+      "unit": "箱",
+      "quantity": 3,
+      "price": 2747,
+      "amount": 8241
+    },
+    {
+      "name": "传真机",
+      "spec": "热敏纸",
+      "unit": "组",
+      "quantity": 9,
+      "price": 1997,
+      "amount": 17973
+    },
+    {
+      "name": "对讲机",
+      "spec": "500米",
+      "unit": "条",
+      "quantity": 1,
+      "price": 343,
+      "amount": 343
+    },
+    {
+      "name": "门禁系统",
+      "spec": "刷卡+密码",
+      "unit": "张",
+      "quantity": 6,
+      "price": 1044,
+      "amount": 6264
+    },
+    {
+      "name": "监控摄像头",
+      "spec": "400万像素",
+      "unit": "只",
+      "quantity": 8,
+      "price": 4831,
+      "amount": 38648
+    },
+    {
+      "name": "考勤机",
+      "spec": "人脸+指纹",
+      "unit": "台",
+      "quantity": 5,
+      "price": 1135,
+      "amount": 5675
+    },
+    {
+      "name": "打卡机",
+      "spec": "IC卡",
+      "unit": "套",
+      "quantity": 7,
+      "price": 2576,
+      "amount": 18032
+    },
+    {
+      "name": "人脸识别终端",
+      "spec": "7英寸触摸屏",
+      "unit": "把",
+      "quantity": 10,
+      "price": 3110,
+      "amount": 31100
+    },
+    {
+      "name": "指纹锁",
+      "spec": "半导体",
+      "unit": "个",
+      "quantity": 9,
+      "price": 1104,
+      "amount": 9936
+    },
+    {
+      "name": "智能门锁",
+      "spec": "指纹+密码",
+      "unit": "件",
+      "quantity": 8,
+      "price": 1283,
+      "amount": 10264
+    },
+    {
+      "name": "智能插座",
+      "spec": "16A",
+      "unit": "箱",
+      "quantity": 6,
+      "price": 2293,
+      "amount": 13758
+    },
+    {
+      "name": "智能开关",
+      "spec": "单火线",
+      "unit": "组",
+      "quantity": 1,
+      "price": 1088,
+      "amount": 1088
+    },
+    {
+      "name": "智能灯泡",
+      "spec": "E27螺口",
+      "unit": "条",
+      "quantity": 10,
+      "price": 1709,
+      "amount": 17090
+    },
+    {
+      "name": "智能窗帘",
+      "spec": "电动",
+      "unit": "张",
+      "quantity": 3,
+      "price": 2573,
+      "amount": 7719
+    },
+    {
+      "name": "智能音箱",
+      "spec": "WiFi连接",
+      "unit": "只",
+      "quantity": 7,
+      "price": 2190,
+      "amount": 15330
+    },
+    {
+      "name": "笔记本电脑",
+      "spec": "i7/16GB/512GB",
+      "unit": "台",
+      "quantity": 9,
+      "price": 3977,
+      "amount": 35793
+    },
+    {
+      "name": "显示器",
+      "spec": "27英寸 4K",
+      "unit": "套",
+      "quantity": 5,
+      "price": 5067,
+      "amount": 25335
+    },
+    {
+      "name": "键盘鼠标套装",
+      "spec": "无线",
+      "unit": "把",
+      "quantity": 7,
+      "price": 3668,
+      "amount": 25676
+    },
+    {
+      "name": "办公椅",
+      "spec": "人体工学",
+      "unit": "个",
+      "quantity": 7,
+      "price": 4204,
+      "amount": 29428
+    },
+    {
+      "name": "文件柜",
+      "spec": "三层",
+      "unit": "件",
+      "quantity": 6,
+      "price": 2146,
+      "amount": 12876
+    },
+    {
+      "name": "打印机",
+      "spec": "黑白激光",
+      "unit": "箱",
+      "quantity": 7,
+      "price": 919,
+      "amount": 6433
+    },
+    {
+      "name": "扫描仪",
+      "spec": "A4平板",
+      "unit": "组",
+      "quantity": 4,
+      "price": 3706,
+      "amount": 14824
+    },
+    {
+      "name": "投影仪",
+      "spec": "1080P",
+      "unit": "条",
+      "quantity": 5,
+      "price": 3902,
+      "amount": 19510
+    },
+    {
+      "name": "白板",
+      "spec": "1.2x2.4m",
+      "unit": "张",
+      "quantity": 7,
+      "price": 2896,
+      "amount": 20272
+    },
+    {
+      "name": "碎纸机",
+      "spec": "CD级别",
+      "unit": "只",
+      "quantity": 6,
+      "price": 3440,
+      "amount": 20640
+    },
+    {
+      "name": "路由器",
+      "spec": "千兆",
+      "unit": "台",
+      "quantity": 4,
+      "price": 343,
+      "amount": 1372
+    },
+    {
+      "name": "交换机",
+      "spec": "24口",
+      "unit": "套",
+      "quantity": 7,
+      "price": 2168,
+      "amount": 15176
+    },
+    {
+      "name": "服务器",
+      "spec": "2U机架式",
+      "unit": "把",
+      "quantity": 6,
+      "price": 1010,
+      "amount": 6060
+    },
+    {
+      "name": "硬盘",
+      "spec": "2TB SATA",
+      "unit": "个",
+      "quantity": 1,
+      "price": 3421,
+      "amount": 3421
+    },
+    {
+      "name": "内存条",
+      "spec": "DDR4 8GB",
+      "unit": "件",
+      "quantity": 7,
+      "price": 4691,
+      "amount": 32837
+    },
+    {
+      "name": "CPU",
+      "spec": "Intel i5-12400F",
+      "unit": "箱",
+      "quantity": 5,
+      "price": 1854,
+      "amount": 9270
+    },
+    {
+      "name": "显卡",
+      "spec": "RTX 3060",
+      "unit": "组",
+      "quantity": 3,
+      "price": 3369,
+      "amount": 10107
+    },
+    {
+      "name": "主板",
+      "spec": "Z790芯片组",
+      "unit": "条",
+      "quantity": 7,
+      "price": 3146,
+      "amount": 22022
+    },
+    {
+      "name": "电源",
+      "spec": "650W金牌",
+      "unit": "张",
+      "quantity": 5,
+      "price": 3637,
+      "amount": 18185
+    },
+    {
+      "name": "机箱",
+      "spec": "ATX中塔",
+      "unit": "只",
+      "quantity": 4,
+      "price": 4830,
+      "amount": 19320
+    },
+    {
+      "name": "显示器支架",
+      "spec": "铝合金双臂",
+      "unit": "台",
+      "quantity": 4,
+      "price": 1780,
+      "amount": 7120
+    },
+    {
+      "name": "笔记本支架",
+      "spec": "可折叠",
+      "unit": "套",
+      "quantity": 4,
+      "price": 3969,
+      "amount": 15876
+    },
+    {
+      "name": "USB集线器",
+      "spec": "7口USB3.0",
+      "unit": "把",
+      "quantity": 10,
+      "price": 1687,
+      "amount": 16870
+    },
+    {
+      "name": "网线",
+      "spec": "超五类",
+      "unit": "个",
+      "quantity": 2,
+      "price": 4499,
+      "amount": 8998
+    },
+    {
+      "name": "光纤跳线",
+      "spec": "单模LC",
+      "unit": "件",
+      "quantity": 3,
+      "price": 4458,
+      "amount": 13374
+    },
+    {
+      "name": "办公桌",
+      "spec": "1.6m x 0.8m",
+      "unit": "箱",
+      "quantity": 3,
+      "price": 2484,
+      "amount": 7452
+    },
+    {
+      "name": "会议桌",
+      "spec": "3m x 1.2m",
+      "unit": "组",
+      "quantity": 7,
+      "price": 5087,
+      "amount": 35609
+    },
+    {
+      "name": "茶几",
+      "spec": "玻璃钢化",
+      "unit": "条",
+      "quantity": 9,
+      "price": 3059,
+      "amount": 27531
+    },
+    {
+      "name": "书架",
+      "spec": "四层",
+      "unit": "张",
+      "quantity": 5,
+      "price": 1188,
+      "amount": 5940
+    },
+    {
+      "name": "储物柜",
+      "spec": "双门",
+      "unit": "只",
+      "quantity": 6,
+      "price": 1188,
+      "amount": 7128
+    },
+    {
+      "name": "空调",
+      "spec": "1.5匹变频",
+      "unit": "台",
+      "quantity": 5,
+      "price": 3561,
+      "amount": 17805
+    },
+    {
+      "name": "空气净化器",
+      "spec": "HEPA过滤",
+      "unit": "套",
+      "quantity": 8,
+      "price": 3515,
+      "amount": 28120
+    },
+    {
+      "name": "加湿器",
+      "spec": "5L容量",
+      "unit": "把",
+      "quantity": 3,
+      "price": 3879,
+      "amount": 11637
+    },
+    {
+      "name": "饮水机",
+      "spec": "台式",
+      "unit": "个",
+      "quantity": 4,
+      "price": 510,
+      "amount": 2040
+    },
+    {
+      "name": "微波炉",
+      "spec": "20L",
+      "unit": "件",
+      "quantity": 10,
+      "price": 1463,
+      "amount": 14630
+    },
+    {
+      "name": "电话机",
+      "spec": "无绳电话",
+      "unit": "箱",
+      "quantity": 6,
+      "price": 2117,
+      "amount": 12702
+    },
+    {
+      "name": "传真机",
+      "spec": "热敏纸",
+      "unit": "组",
+      "quantity": 10,
+      "price": 4714,
+      "amount": 47140
+    },
+    {
+      "name": "对讲机",
+      "spec": "500米",
+      "unit": "条",
+      "quantity": 6,
+      "price": 1925,
+      "amount": 11550
+    },
+    {
+      "name": "门禁系统",
+      "spec": "刷卡+密码",
+      "unit": "张",
+      "quantity": 2,
+      "price": 4120,
+      "amount": 8240
+    },
+    {
+      "name": "监控摄像头",
+      "spec": "400万像素",
+      "unit": "只",
+      "quantity": 5,
+      "price": 3992,
+      "amount": 19960
+    },
+    {
+      "name": "考勤机",
+      "spec": "人脸+指纹",
+      "unit": "台",
+      "quantity": 1,
+      "price": 2760,
+      "amount": 2760
+    },
+    {
+      "name": "打卡机",
+      "spec": "IC卡",
+      "unit": "套",
+      "quantity": 4,
+      "price": 1987,
+      "amount": 7948
+    },
+    {
+      "name": "人脸识别终端",
+      "spec": "7英寸触摸屏",
+      "unit": "把",
+      "quantity": 8,
+      "price": 4274,
+      "amount": 34192
+    },
+    {
+      "name": "指纹锁",
+      "spec": "半导体",
+      "unit": "个",
+      "quantity": 5,
+      "price": 1429,
+      "amount": 7145
+    },
+    {
+      "name": "智能门锁",
+      "spec": "指纹+密码",
+      "unit": "件",
+      "quantity": 1,
+      "price": 395,
+      "amount": 395
+    },
+    {
+      "name": "智能插座",
+      "spec": "16A",
+      "unit": "箱",
+      "quantity": 7,
+      "price": 740,
+      "amount": 5180
+    },
+    {
+      "name": "智能开关",
+      "spec": "单火线",
+      "unit": "组",
+      "quantity": 1,
+      "price": 1316,
+      "amount": 1316
+    },
+    {
+      "name": "智能灯泡",
+      "spec": "E27螺口",
+      "unit": "条",
+      "quantity": 1,
+      "price": 2093,
+      "amount": 2093
+    },
+    {
+      "name": "智能窗帘",
+      "spec": "电动",
+      "unit": "张",
+      "quantity": 7,
+      "price": 847,
+      "amount": 5929
+    },
+    {
+      "name": "智能音箱",
+      "spec": "WiFi连接",
+      "unit": "只",
+      "quantity": 5,
+      "price": 2342,
+      "amount": 11710
+    }
+  ],
+  "totalQuantity": 570,
+  "totalAmount": 1528089,
+  "totalChinese": "壹佰伍拾贰万捌仟零捌拾玖元整",
+  "remark": "请尽快安排发货",
+  "creator": "张三",
+  "reviewer": "李四",
+  "receiver": "王五",
+  "receiveDate": "2023-10-02"
+}
