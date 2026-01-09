@@ -345,7 +345,30 @@ const PrintTestPanel: React.FC = () => {
 
       {/* 主内容区域 */}
       <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+        <h2 style={{ margin: '0 0 16px 0', fontSize: 18 }}>打印输出接口测试</h2>
+        <div style={{ marginBottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button onClick={handleRefresh} style={{ ...btnStyle, background: '#faad14' }}>
+            刷新设计
+          </button>
+          <button onClick={handleRenderHtml} style={btnStyle}>
+            渲染为 HTML
+          </button>
+          <button onClick={handlePreviewHtml} style={btnStyle}>
+            预览 HTML (新窗口)
+          </button>
+          <button onClick={handleExportPdf} style={btnStyle}>
+            导出 PDF
+          </button>
+          <button onClick={handleOpenPrintWindow} style={btnStyle}>
+            打开打印窗口
+          </button>
+          <button onClick={() => setShowDesigner(true)} style={{ ...btnStyle, background: '#1890ff' }}>
+            进入设计器
+          </button>
+        </div>
+
         {/* README 文档 */}
+        <h3 style={{ margin: '20px 0 12px 0', fontSize: 16 }}>项目文档</h3>
         <pre style={{
           background: '#f6f8fa',
           border: '1px solid #e1e4e8',
@@ -358,31 +381,9 @@ const PrintTestPanel: React.FC = () => {
           wordWrap: 'break-word',
           fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
           color: '#24292e',
-          maxHeight: 400,
+          maxHeight: 500,
           overflow: 'auto',
         }}>{readmeContent || '加载文档中...'}</pre>
-
-        <h2 style={{ margin: '0 0 16px 0', fontSize: 18 }}>打印输出接口测试</h2>
-      <div style={{ marginBottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <button onClick={handleRefresh} style={{ ...btnStyle, background: '#faad14' }}>
-          刷新设计
-        </button>
-        <button onClick={handleRenderHtml} style={btnStyle}>
-          渲染为 HTML
-        </button>
-        <button onClick={handlePreviewHtml} style={btnStyle}>
-          预览 HTML (新窗口)
-        </button>
-        <button onClick={handleExportPdf} style={btnStyle}>
-          导出 PDF
-        </button>
-        <button onClick={handleOpenPrintWindow} style={btnStyle}>
-          打开打印窗口
-        </button>
-        <button onClick={() => setShowDesigner(true)} style={{ ...btnStyle, background: '#1890ff' }}>
-          进入设计器
-        </button>
-      </div>
 
       {htmlResult && (
         <div>
