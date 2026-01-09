@@ -27,7 +27,6 @@ npm install print-designer
 
 ```tsx
 import { BandBoundaryDesigner } from 'print-designer';
-import 'print-designer/dist/style.css';
 
 // 定义数据字段
 const dataFields = [
