@@ -29,7 +29,7 @@
     "报表设计器"
   ],
   "author": "程宜华",
-  "license": "MIT",
+  "license": "CC-BY-NC-4.0",
   "dependencies": {
     "html2canvas": "^1.4.1",
     "jsbarcode": "^3.12.1",

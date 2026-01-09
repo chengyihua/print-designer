@@ -458,7 +458,9 @@ import {
 
 ## License
 
-MIT
+CC BY-NC 4.0 (非商业授权)
+
+本项目仅限个人学习和非商业用途。如需商业授权，请联系：chengyihua@acbnlink.com
 
 ## 作者
 
