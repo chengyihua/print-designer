@@ -198,7 +198,11 @@ console.log('  - window.printTest.openPrintWindow() // 打开打印窗口\n');
 // 测试按钮组件
 const PrintTestPanel: React.FC = () => {
   const [htmlResult, setHtmlResult] = useState<string | null>(null);
-  const [showDesigner, setShowDesigner] = useState(false);
+  const [showDesigner, setShowDesigner] = useState(() => {
+    // 检查 URL 参数是否为设计器模式
+    const params = new URLSearchParams(window.location.search);
+    return params.get('mode') === 'designer';
+  });
   const [design, setDesign] = useState<DesignData | null>(null);
   const [loading, setLoading] = useState(true);
   const [readmeContent, setReadmeContent] = useState('');
@@ -227,7 +231,39 @@ const PrintTestPanel: React.FC = () => {
       dataFields: testDataFields,
       pageSettings: getCurrentPageSettings(),
     });
-    setHtmlResult(result.html);
+    // 在新窗口中显示 HTML 渲染结果
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>HTML 渲染结果</title>
+          <style>
+            body { font-family: sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+            .container { display: flex; gap: 20px; height: calc(100vh - 40px); }
+            .panel { flex: 1; display: flex; flex-direction: column; }
+            .panel-title { font-weight: bold; margin-bottom: 8px; color: #333; }
+            .render-result { flex: 1; background: #fff; border: 1px solid #ddd; padding: 10px; overflow: auto; }
+            .code-result { flex: 1; background: #1e1e1e; color: #d4d4d4; padding: 10px; overflow: auto; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="panel">
+              <div class="panel-title">渲染结果 (总 ${result.totalPages} 页)</div>
+              <div class="render-result">${result.html}</div>
+            </div>
+            <div class="panel">
+              <div class="panel-title">HTML 源码</div>
+              <pre class="code-result">${result.html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+      win.document.close();
+    }
     console.log('✅ renderToHtml:', { totalPages: result.totalPages, pageWidth: result.pageWidth, pageHeight: result.pageHeight });
   };
 
@@ -363,7 +399,7 @@ const PrintTestPanel: React.FC = () => {
           <button onClick={handleOpenPrintWindow} style={btnStyle}>
             打开打印窗口
           </button>
-          <button onClick={() => setShowDesigner(true)} style={{ ...btnStyle, background: '#1890ff' }}>
+          <button onClick={() => window.open(window.location.href + '?mode=designer', '_blank')} style={{ ...btnStyle, background: '#1890ff' }}>
             进入设计器
           </button>
         </div>
@@ -385,69 +421,6 @@ const PrintTestPanel: React.FC = () => {
           }}
           dangerouslySetInnerHTML={{ __html: readmeContent ? marked(readmeContent) as string : '加载文档中...' }}
         />
-
-      {htmlResult && (
-        <div>
-          <h3>HTML 渲染结果预览:</h3>
-          <div style={{ display: 'flex', gap: 10, height: 600 }}>
-            {/* 左侧：渲染结果 */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ marginBottom: 5, fontWeight: 'bold', color: '#666' }}>渲染结果</div>
-              <div
-                style={{
-                  flex: 1,
-                  border: '1px solid #ccc',
-                  background: '#f5f5f5',
-                  padding: 10,
-                  overflow: 'auto',
-                }}
-                dangerouslySetInnerHTML={{ __html: htmlResult }}
-              />
-            </div>
-            {/* 右侧：HTML 源码 */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ marginBottom: 5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: '#666' }}>HTML 源码</span>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(formatHtml(htmlResult));
-                    console.log('✅ HTML 已复制到剪贴板');
-                  }}
-                  style={{
-                    padding: '4px 12px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    background: '#1890ff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 4,
-                  }}
-                >
-                  复制
-                </button>
-              </div>
-              <pre
-                style={{
-                  flex: 1,
-                  border: '1px solid #ccc',
-                  background: '#1e1e1e',
-                  color: '#d4d4d4',
-                  padding: 10,
-                  overflow: 'auto',
-                  margin: 0,
-                  fontSize: 12,
-                  fontFamily: 'Consolas, Monaco, monospace',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                  tabSize: 2,
-                }}
-              >
-                {formatHtml(htmlResult)}
-              </pre>
-            </div>
-          </div>
-        </div>
-      )}
       </div>
 
       {/* 底部版权信息 */}
