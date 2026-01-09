@@ -1085,7 +1085,9 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                                 disabled={currentPage === 1}
                                 title="上一页"
                             >
-                                ◀
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                                </svg>
                             </button>
                             <span className="page-info">
                                 第
@@ -1110,7 +1112,9 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                                 disabled={currentPage === totalPages}
                                 title="下一页"
                             >
-                                ▶
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                    <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                                </svg>
                             </button>
                         </div>
                     </div>
