@@ -1,6 +1,7 @@
 {
   "name": "print-designer",
   "version": "1.0.5",
+  "homepage": "https://chengyihua.github.io/print-designer",
   "description": "报表设计器 React 组件库",
   "main": "dist/print-designer.umd.js",
   "module": "dist/print-designer.es.js",
@@ -46,7 +47,9 @@
     "build:lib": "vite build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prepublishOnly": "npm run build:lib"
+    "prepublishOnly": "npm run build:lib",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
