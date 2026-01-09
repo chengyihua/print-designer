@@ -1080,7 +1080,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
 
                         <div className="page-controls">
                             <button
-                                className="btn btn-small"
+                                className="btn btn-small btn-primary"
                                 onClick={() => scrollToPage(Math.max(1, currentPage - 1))}
                                 disabled={currentPage === 1}
                                 title="上一页"
@@ -1105,7 +1105,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                                 页 / 共 {totalPages} 页
                             </span>
                             <button
-                                className="btn btn-small"
+                                className="btn btn-small btn-primary"
                                 onClick={() => scrollToPage(Math.min(totalPages, currentPage + 1))}
                                 disabled={currentPage === totalPages}
                                 title="下一页"

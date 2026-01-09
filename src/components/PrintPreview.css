@@ -158,6 +158,22 @@
     min-height: 28px;
 }
 
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-primary:disabled {
+    background: #91caff;
+}
+
 /* 缩放控制 */
 .zoom-select {
     padding: 6px 10px;
