@@ -200,26 +200,20 @@ const PrintTestPanel: React.FC = () => {
   const [showDesigner, setShowDesigner] = useState(false);
   const [design, setDesign] = useState<DesignData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showReadme, setShowReadme] = useState(false);
   const [readmeContent, setReadmeContent] = useState('');
 
-  // 加载设计数据（与 App.tsx 保持一致）
+  // 加载设计数据和 README
   useEffect(() => {
     loadDesign().then(data => {
       setDesign(data);
       setLoading(false);
     });
+    // 加载 README
+    fetch('https://raw.githubusercontent.com/chengyihua/print-designer/main/README.md')
+      .then(res => res.text())
+      .then(text => setReadmeContent(text))
+      .catch(() => setReadmeContent('无法加载 README 内容'));
   }, []);
-
-  const loadReadme = () => {
-    if (!readmeContent) {
-      fetch('https://raw.githubusercontent.com/chengyihua/print-designer/main/README.md')
-        .then(res => res.text())
-        .then(text => setReadmeContent(text))
-        .catch(() => setReadmeContent('无法加载 README 内容'));
-    }
-    setShowReadme(true);
-  };
 
   // 获取当前设计数据
   const getCurrentTemplate = () => design?.bands || (templateDesign as DesignData).bands || [];
@@ -290,126 +284,85 @@ const PrintTestPanel: React.FC = () => {
   }
 
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
-      {/* GitHub 链接栏 */}
+    <div style={{ fontFamily: 'sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* 顶部栏 */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 16,
-        padding: '8px 16px',
+        padding: '12px 20px',
         background: '#24292e',
         color: '#fff',
       }}>
-        <a 
-          href="https://github.com/chengyihua/print-designer" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            color: '#fff',
-            textDecoration: 'none',
-            fontSize: 14,
-            padding: '6px 12px',
-            borderRadius: 4,
-          }}
-        >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-          </svg>
-          <span>GitHub</span>
-        </a>
-        <button onClick={loadReadme} style={{
-          background: 'transparent',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          color: '#fff',
-          padding: '6px 12px',
-          borderRadius: 4,
-          cursor: 'pointer',
-          fontSize: 14,
-        }}>
-          📖 文档
-        </button>
-        <a 
-          href="https://www.npmjs.com/package/print-designer" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{
-            color: '#fff',
-            textDecoration: 'none',
-            fontSize: 14,
-            padding: '6px 12px',
-            borderRadius: 4,
-          }}
-        >
-          📦 npm
-        </a>
-        <span style={{ marginLeft: 'auto', fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
-          CC BY-NC 4.0 | 非商业授权
+        <h1 style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>Print Designer</h1>
+        <span style={{ marginLeft: 12, fontSize: 12, color: 'rgba(255,255,255,0.5)', padding: '2px 8px', background: 'rgba(255,255,255,0.1)', borderRadius: 4 }}>
+          报表设计器
         </span>
-      </div>
-
-      {/* README 弹窗 */}
-      {showReadme && (
-        <div onClick={() => setShowReadme(false)} style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10000,
-        }}>
-          <div onClick={e => e.stopPropagation()} style={{
-            background: '#fff',
-            borderRadius: 8,
-            width: '90%',
-            maxWidth: 900,
-            maxHeight: '85vh',
-            display: 'flex',
-            flexDirection: 'column',
-            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.3)',
-          }}>
-            <div style={{
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <a 
+            href="https://github.com/chengyihua/print-designer" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 20px',
-              borderBottom: '1px solid #e8e8e8',
-            }}>
-              <h2 style={{ margin: 0, fontSize: 18 }}>Print Designer 文档</h2>
-              <button onClick={() => setShowReadme(false)} style={{
-                background: 'none',
-                border: 'none',
-                fontSize: 24,
-                cursor: 'pointer',
-                color: '#999',
-                padding: 0,
-              }}>×</button>
-            </div>
-            <pre style={{
-              flex: 1,
-              overflow: 'auto',
-              padding: 20,
-              margin: 0,
+              gap: 6,
+              color: '#fff',
+              textDecoration: 'none',
               fontSize: 14,
-              lineHeight: 1.8,
-              whiteSpace: 'pre-wrap',
-              wordWrap: 'break-word',
-              fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-              color: '#333',
-            }}>{readmeContent || '加载中...'}</pre>
-          </div>
+              padding: '6px 12px',
+              borderRadius: 4,
+              background: 'rgba(255,255,255,0.1)',
+            }}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a 
+            href="https://www.npmjs.com/package/print-designer" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              color: '#fff',
+              textDecoration: 'none',
+              fontSize: 14,
+              padding: '6px 12px',
+              borderRadius: 4,
+              background: 'rgba(255,255,255,0.1)',
+            }}
+          >
+            📦 npm
+          </a>
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+            CC BY-NC 4.0
+          </span>
         </div>
-      )}
+      </div>
 
-      {/* 主内容 */}
-      <div style={{ padding: 20 }}>
-        <h2>打印输出接口测试</h2>
+      {/* 主内容区域 */}
+      <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+        {/* README 文档 */}
+        <pre style={{
+          background: '#f6f8fa',
+          border: '1px solid #e1e4e8',
+          borderRadius: 8,
+          padding: 20,
+          margin: '0 0 20px 0',
+          fontSize: 14,
+          lineHeight: 1.8,
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+          fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+          color: '#24292e',
+          maxHeight: 400,
+          overflow: 'auto',
+        }}>{readmeContent || '加载文档中...'}</pre>
+
+        <h2 style={{ margin: '0 0 16px 0', fontSize: 18 }}>打印输出接口测试</h2>
       <div style={{ marginBottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <button onClick={handleRefresh} style={{ ...btnStyle, background: '#faad14' }}>
           刷新设计
