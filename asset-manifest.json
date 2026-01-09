@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/print-designer/static/css/main.85056a10.css",
-    "main.js": "/print-designer/static/js/main.24815305.js",
+    "main.js": "/print-designer/static/js/main.a54905e1.js",
     "static/js/977.bd823bd4.chunk.js": "/print-designer/static/js/977.bd823bd4.chunk.js",
     "static/js/455.34c9c166.chunk.js": "/print-designer/static/js/455.34c9c166.chunk.js",
     "static/js/453.6f03aa65.chunk.js": "/print-designer/static/js/453.6f03aa65.chunk.js",
     "index.html": "/print-designer/index.html",
     "main.85056a10.css.map": "/print-designer/static/css/main.85056a10.css.map",
-    "main.24815305.js.map": "/print-designer/static/js/main.24815305.js.map",
+    "main.a54905e1.js.map": "/print-designer/static/js/main.a54905e1.js.map",
     "977.bd823bd4.chunk.js.map": "/print-designer/static/js/977.bd823bd4.chunk.js.map",
     "455.34c9c166.chunk.js.map": "/print-designer/static/js/455.34c9c166.chunk.js.map",
     "453.6f03aa65.chunk.js.map": "/print-designer/static/js/453.6f03aa65.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.85056a10.css",
-    "static/js/main.24815305.js"
+    "static/js/main.a54905e1.js"
   ]
 }
