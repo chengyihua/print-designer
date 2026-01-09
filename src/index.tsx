@@ -442,7 +442,7 @@ const PrintTestPanel: React.FC = () => {
 
       {/* 主内容区域 */}
       <div style={{ flex: 1, overflow: 'auto', padding: '20px 0', background: '#f9f9f9' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 20px' }}>
         <h2 style={{ margin: '0 0 16px 0', fontSize: 18 }}>打印输出接口测试</h2>
         <div style={{ marginBottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button onClick={handleRefresh} style={{ ...btnStyle, background: '#faad14' }}>
