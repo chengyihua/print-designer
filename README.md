@@ -21,21 +21,24 @@ npm install print-designer
 
 ## 快速开始
 
+### 基本使用（设计器模式）
+
 ```tsx
 import { BandBoundaryDesigner } from 'print-designer';
 import 'print-designer/dist/style.css';
 
 // 定义数据字段
 const dataFields = [
+    // 主表字段
     { name: 'orderNo', label: '订单号', type: 'string', source: 'master' },
     { name: 'customer', label: '客户名称', type: 'string', source: 'master' },
     { name: 'orderDate', label: '订单日期', type: 'date', source: 'master' },
     { name: 'totalAmount', label: '总金额', type: 'currency', source: 'master' },
-    // 明细字段
-    { name: 'productName', label: '产品名称', type: 'string', source: 'detail' },
-    { name: 'quantity', label: '数量', type: 'number', source: 'detail' },
-    { name: 'unitPrice', label: '单价', type: 'currency', source: 'detail' },
-    { name: 'amount', label: '金额', type: 'currency', source: 'detail' },
+    // 明细字段（source 为 'detail'）
+    { name: 'products.name', label: '产品名称', type: 'string', source: 'detail' },
+    { name: 'products.quantity', label: '数量', type: 'number', source: 'detail' },
+    { name: 'products.price', label: '单价', type: 'currency', source: 'detail' },
+    { name: 'products.amount', label: '金额', type: 'currency', source: 'detail' },
 ];
 
 // 预览数据
@@ -44,11 +47,11 @@ const previewData = {
     customer: '测试客户公司',
     orderDate: '2024-01-15',
     totalAmount: 15000,
-    // 明细数据（数组名称会自动识别）
+    // 明细数据（数组名称根据字段定义自动识别，如 products.name → products）
     products: [
-        { productName: '产品A', quantity: 10, unitPrice: 500, amount: 5000 },
-        { productName: '产品B', quantity: 20, unitPrice: 300, amount: 6000 },
-        { productName: '产品C', quantity: 8, unitPrice: 500, amount: 4000 },
+        { name: '产品A', quantity: 10, price: 500, amount: 5000 },
+        { name: '产品B', quantity: 20, price: 300, amount: 6000 },
+        { name: '产品C', quantity: 8, price: 500, amount: 4000 },
     ],
 };
 
@@ -56,6 +59,7 @@ function App() {
     const handleSave = (design) => {
         console.log('保存设计:', design);
         // 保存到服务器或本地存储
+        localStorage.setItem('design', JSON.stringify(design));
     };
 
     const handleDesignChange = (bands) => {
@@ -71,6 +75,51 @@ function App() {
         />
     );
 }
+```
+
+### 直接打印输出（无需设计器）
+
+如果已有设计模板，可以直接调用打印输出接口：
+
+```tsx
+import { 
+    renderToHtml, 
+    exportToPdf, 
+    getPrintableHtml, 
+    openPrintWindow 
+} from 'print-designer';
+
+// 从存储加载设计模板
+const savedDesign = JSON.parse(localStorage.getItem('design') || '{}');
+const template = savedDesign.bands;
+const pageSettings = savedDesign.pageSettings;
+
+// 打印配置
+const printOptions = {
+    template,           // 设计模板（带区数据）
+    data: previewData,  // 业务数据
+    dataFields,         // 数据字段定义
+    pageSettings,       // 页面设置（可选）
+};
+
+// 1. 渲染为 HTML 字符串
+const result = renderToHtml(printOptions);
+console.log('总页数:', result.totalPages);
+console.log('HTML:', result.html);
+
+// 2. 导出 PDF
+await exportToPdf({
+    ...printOptions,
+    fileName: '订单报表',  // PDF 文件名
+    download: true,           // 直接下载
+});
+
+// 3. 获取完整的可打印 HTML 文档
+const printHtml = getPrintableHtml(printOptions);
+// 可以发送给服务器生成 PDF 或打印
+
+// 4. 打开打印窗口
+openPrintWindow(printOptions);
 ```
 
 ## API 文档
@@ -115,6 +164,92 @@ import { PrintPreview } from 'print-designer';
 | showPageNumbers | `boolean` | | `true` | 是否显示页码 |
 | paperWidthMm | `number` | | `210` | 纸张宽度(mm)，用于PDF导出 |
 | paperHeightMm | `number` | | `297` | 纸张高度(mm)，用于PDF导出 |
+
+### 打印输出函数
+
+#### renderToHtml(options)
+
+将设计模板和数据渲染为 HTML 字符串。
+
+```typescript
+import { renderToHtml } from 'print-designer';
+
+const result = renderToHtml({
+    template: Band[],        // 设计模板（带区数据）
+    data: object,            // 业务数据
+    dataFields?: DataField[],// 数据字段定义
+    pageSettings?: PageSettings, // 页面设置
+    pageWidth?: number,      // 页面宽度(px)，默认 794
+    pageHeight?: number,     // 页面高度(px)，默认 1123
+    pageMargins?: { top, bottom, left, right }, // 页边距(px)
+});
+
+// 返回结果
+console.log(result.html);         // HTML 字符串
+console.log(result.totalPages);   // 总页数
+console.log(result.pageWidth);    // 页面宽度(px)
+console.log(result.pageHeight);   // 页面高度(px)
+console.log(result.paperWidthMm); // 纸张宽度(mm)
+console.log(result.paperHeightMm);// 纸张高度(mm)
+```
+
+#### exportToPdf(options)
+
+导出为 PDF 文件。
+
+```typescript
+import { exportToPdf } from 'print-designer';
+
+await exportToPdf({
+    template: Band[],        // 设计模板
+    data: object,            // 业务数据
+    dataFields?: DataField[],// 数据字段定义
+    pageSettings?: PageSettings, // 页面设置
+    fileName?: string,       // 文件名（不含扩展名），默认 '报表_日期'
+    download?: boolean,      // 是否直接下载，默认 true
+    scale?: number,          // 图片缩放比例，默认 2
+});
+
+// 如果 download 为 false，返回 Blob 对象
+const pdfBlob = await exportToPdf({ ...options, download: false });
+```
+
+#### getPrintableHtml(options)
+
+获取完整的可打印 HTML 文档，包含样式和打印配置。
+
+```typescript
+import { getPrintableHtml } from 'print-designer';
+
+const html = getPrintableHtml({
+    template: Band[],
+    data: object,
+    dataFields?: DataField[],
+    pageSettings?: PageSettings,
+});
+
+// 返回完整的 HTML 文档字符串（包含 DOCTYPE、打印样式等）
+// 可用于：
+// - 发送给服务器生成 PDF
+// - iframe 打印
+// - 保存为 HTML 文件
+```
+
+#### openPrintWindow(options)
+
+在新窗口中打开打印预览，并触发打印对话框。
+
+```typescript
+import { openPrintWindow } from 'print-designer';
+
+openPrintWindow({
+    template: Band[],
+    data: object,
+    dataFields?: DataField[],
+    pageSettings?: PageSettings,
+});
+// 会打开新窗口并自动调用 window.print()
+```
 
 ## 类型定义
 
