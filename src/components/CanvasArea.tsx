@@ -490,37 +490,12 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
         );
     };
 
-
-    // 渲染带区背景（激活状态高亮）
-    const renderBandBackgrounds = () => {
-        return bands.map((band) => {
-            const height = Math.max(0, band.actualBottom - band.top);
-            const isActive = state.selectedBand === band.id;
-            
-            return (
-                <div
-                    key={`band-bg-${band.id}`}
-                    style={{
-                        position: 'absolute',
-                        top: `${band.top}px`,
-                        left: 0,
-                        right: 0,
-                        height: `${height}px`,
-                        backgroundColor: isActive ? 'rgba(24, 144, 255, 0.06)' : 'transparent',
-                        borderLeft: isActive ? '3px solid #1890ff' : '3px solid transparent',
-                        pointerEvents: 'none',
-                        transition: 'background-color 0.15s, border-color 0.15s',
-                    }}
-                />
-            );
-        });
-    };
-
     // 渲染带区边界线
     const renderBoundaryLines = () => {
         return bands.map((band) => {
             const height = Math.max(0, band.actualBottom - band.top);
             const isDragging = state.draggingBoundary === band.id;
+            const isActive = state.selectedBand === band.id;
             const boundaryTop = band.top + height;
 
             return (
@@ -539,8 +514,9 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: isDragging ? '#666' : '#f3f3f3',
-                        border: '1px solid #aeadad'
+                        backgroundColor: isDragging ? '#666' : isActive ? '#e6f4ff' : '#f3f3f3',
+                        border: isActive ? '1px solid #1890ff' : '1px solid #aeadad',
+                        transition: 'background-color 0.15s, border-color 0.15s',
                     }}
                     onMouseDown={(e) => onBoundaryMouseDown(band.id, e)}
                     title={`拖动调整${band.name}高度 (当前: ${height.toFixed(1)}px)`}
@@ -553,9 +529,10 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontSize: '12px',
-                        color: '#c3c3c3',
+                        color: isActive ? '#1890ff' : '#c3c3c3',
                         whiteSpace: 'nowrap',
                         background: 'transparent',
+                        fontWeight: isActive ? 500 : 400,
                     }}>
                         ↑{band.name}
                     </div>
@@ -816,7 +793,6 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                         width: `${PAGE_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right}px`,
                         height: `${PAGE_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom}px`,
                     }}>
-                        {renderBandBackgrounds()}
                         {renderBoundaryLines()}
                     </div>
 
