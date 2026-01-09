@@ -448,7 +448,19 @@ const PrintTestPanel: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
+
+      {/* 底部版权信息 */}
+      <div style={{
+        padding: '12px 20px',
+        background: '#f6f8fa',
+        borderTop: '1px solid #e1e4e8',
+        textAlign: 'center',
+        fontSize: 12,
+        color: '#586069',
+      }}>
+        © 2024 程宜华 | CC BY-NC 4.0 | 仅限个人学习和非商业用途 | 商业授权请联系: chengyihua@acbnlink.com
+      </div>
     </div>
   );
 };
