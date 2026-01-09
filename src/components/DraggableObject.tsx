@@ -18,7 +18,7 @@ interface DraggableObjectProps {
     onUpdatePosition: (objectId: string, x: number, y: number) => void;
     onUpdateSize?: (objectId: string, width: number, height: number) => void;
     onUpdate?: (objectId: string, updates: Partial<ControlObject>) => void;
-    onDragMultiple?: (deltaX: number, deltaY: number) => void; // 新增：多选拖动回调
+    onDragMultiple?: (deltaX: number, deltaY: number, skipHistory?: boolean) => void; // 新增：多选拖动回调
     minWidth?: number;
     minHeight?: number;
 }
@@ -46,6 +46,10 @@ const DraggableObject: React.FC<DraggableObjectProps> = ({
     const justDraggedRef = useRef(false);
     // 调整过程中的尺寸（用于实时更新手柄位置）
     const [resizingSize, setResizingSize] = useState<{ width: number; height: number } | null>(null);
+    // Shift 键锁定方向：'x' 表示只能水平移动，'y' 表示只能垂直移动
+    const lockDirectionRef = useRef<'x' | 'y' | null>(null);
+    // 记录拖动起始点（用于计算总位移判断方向）
+    const dragOriginRef = useRef<{ x: number; y: number } | null>(null);
     // 解析边框宽度
     const parseBorderWidth = (border: string | undefined): number => {
         if (!border || border === 'none') return 0;
@@ -76,9 +80,9 @@ const DraggableObject: React.FC<DraggableObjectProps> = ({
     const { minW, minH } = getMinSize();
 
     const handleDragStop = useCallback((e: any, d: { x: number; y: number }) => {
-        // 检查是否实际发生了移动
-        const startPos = dragStartRef.current;
-        const hasMoved = startPos && (Math.abs(d.x - startPos.x) > 1 || Math.abs(d.y - startPos.y) > 1);
+        // 检查是否实际发生了移动（使用起始点判断）
+        const originPos = dragOriginRef.current;
+        const hasMoved = originPos && (Math.abs(d.x - originPos.x) > 1 || Math.abs(d.y - originPos.y) > 1);
         
         // 只有实际移动了才标记为刚完成拖动，阻止后续 click 事件
         if (hasMoved) {
@@ -88,10 +92,19 @@ const DraggableObject: React.FC<DraggableObjectProps> = ({
             }, 0);
         }
         
-        dragStartRef.current = null;
+        // 如果是选中拖动（单选或多选），在拖动结束时保存历史
+        if (selectedObjectIds.length >= 1 && isSelected && onDragMultiple && hasMoved) {
+            // 传递 deltaX=0, deltaY=0 不会改变位置，但 skipHistory=false 会保存历史
+            onDragMultiple(0, 0, false);
+        }
         
-        // 如果是多选拖动，在 onDrag 中已经处理了
-        if (selectedObjectIds.length > 1 && isSelected) {
+        dragStartRef.current = null;
+        // 清除方向锁定
+        lockDirectionRef.current = null;
+        dragOriginRef.current = null;
+        
+        // 如果是选中拖动（单选或多选），已经在上面处理了
+        if (selectedObjectIds.length >= 1 && isSelected) {
             return;
         }
         
@@ -99,22 +112,48 @@ const DraggableObject: React.FC<DraggableObjectProps> = ({
         if (hasMoved) {
             onUpdatePosition(object.id, d.x, d.y);
         }
-    }, [object.id, onUpdatePosition, selectedObjectIds.length, isSelected]);
+    }, [object.id, onUpdatePosition, selectedObjectIds.length, isSelected, onDragMultiple]);
 
     // 处理拖动开始
     const handleDragStart = useCallback((e: any, d: { x: number; y: number }) => {
         dragStartRef.current = { x: d.x, y: d.y };
+        dragOriginRef.current = { x: d.x, y: d.y };
+        lockDirectionRef.current = null; // 重置方向锁定
     }, []);
 
     // 处理拖动过程
     const handleDrag = useCallback((e: any, d: { x: number; y: number }) => {
-        // 多选拖动：当前对象被选中且有多个选中对象
-        if (selectedObjectIds.length > 1 && isSelected && dragStartRef.current && onDragMultiple) {
-            const deltaX = d.x - dragStartRef.current.x;
-            const deltaY = d.y - dragStartRef.current.y;
+        // 选中拖动（单选或多选）：当前对象被选中
+        if (selectedObjectIds.length >= 1 && isSelected && dragStartRef.current && onDragMultiple) {
+            let deltaX = d.x - dragStartRef.current.x;
+            let deltaY = d.y - dragStartRef.current.y;
+            
+            // Shift 键方向锁定
+            if (e.shiftKey && dragOriginRef.current) {
+                const totalDeltaX = d.x - dragOriginRef.current.x;
+                const totalDeltaY = d.y - dragOriginRef.current.y;
+                
+                // 如果方向未确定，根据移动距离判断
+                if (!lockDirectionRef.current) {
+                    const threshold = 5; // 移动超过 5px 才确定方向
+                    if (Math.abs(totalDeltaX) > threshold || Math.abs(totalDeltaY) > threshold) {
+                        lockDirectionRef.current = Math.abs(totalDeltaX) > Math.abs(totalDeltaY) ? 'x' : 'y';
+                    }
+                }
+                
+                // 应用方向锁定
+                if (lockDirectionRef.current === 'x') {
+                    deltaY = 0;
+                } else if (lockDirectionRef.current === 'y') {
+                    deltaX = 0;
+                }
+            } else {
+                // 未按住 Shift，清除方向锁定
+                lockDirectionRef.current = null;
+            }
             
             if (deltaX !== 0 || deltaY !== 0) {
-                onDragMultiple(deltaX, deltaY);
+                onDragMultiple(deltaX, deltaY, true); // 拖动过程中跳过历史记录
                 dragStartRef.current = { x: d.x, y: d.y };
             }
         }
@@ -242,6 +281,13 @@ const DraggableObject: React.FC<DraggableObjectProps> = ({
                     return;
                 }
                 onSelect(e);
+            }}
+            onMouseDown={(e: MouseEvent) => {
+                // 右键点击时，如果对象已经被选中，触发 onSelect 以便保持状态
+                if (e.button === 2) {
+                    e.stopPropagation();
+                    onSelect(e as unknown as React.MouseEvent);
+                }
             }}
             style={{
                 position: 'absolute',

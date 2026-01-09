@@ -15,14 +15,14 @@ interface CanvasAreaProps {
     bands: Band[];
     state: DesignerState;
     designerOptions: DesignerOptions;
-    A4_WIDTH: number;
-    A4_HEIGHT: number;
+    PAGE_WIDTH: number;
+    PAGE_HEIGHT: number;
     PAGE_MARGINS: { top: number; bottom: number; left: number; right: number };
     onSelectBand: (bandId: string, e?: React.MouseEvent | MouseEvent) => void;
     onSelectObject: (objectId: string, bandId: string, isMultiSelect?: boolean) => void;
     onUpdateObjectPosition: (objectId: string, x: number, y: number) => void;
     onUpdateObject: (objectId: string, bandId: string, updates: Partial<ControlObject>, skipHistory?: boolean) => void;
-    onMoveMultipleObjects: (moves: Array<{ objectId: string, bandId: string, deltaX: number, deltaY: number }>) => void;
+    onMoveMultipleObjects: (moves: Array<{ objectId: string, bandId: string, deltaX: number, deltaY: number }>, skipHistory?: boolean) => void;
     onResizeMultipleObjects?: (resizes: Array<{ objectId: string, bandId: string, deltaWidth: number, deltaHeight: number }>) => void;
     onPasteObjects?: (objects: Array<{ object: ControlObject, bandId: string }>) => void;
     onBoundaryMouseDown: (bandId: string, e: React.MouseEvent) => void;
@@ -48,8 +48,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
     bands,
     state,
     designerOptions,
-    A4_WIDTH,
-    A4_HEIGHT,
+    PAGE_WIDTH,
+    PAGE_HEIGHT,
     PAGE_MARGINS,
     onSelectBand,
     onSelectObject,
@@ -262,6 +262,15 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
     const handleObjectClick = (objectId: string, bandId: string, e: React.MouseEvent) => {
         e.stopPropagation();
 
+        // 右键点击时，如果对象已经在多选中，保持选择状态不变
+        if (e.button === 2) {
+            const key = `${bandId}-${objectId}`;
+            if (selectedObjectIds?.includes(key)) {
+                // 对象已经被选中，不改变选择状态
+                return;
+            }
+        }
+
         // 检查是否按下了Shift或Ctrl键（多选）
         const isMultiSelect = e.shiftKey || e.ctrlKey || e.metaKey;
 
@@ -330,9 +339,9 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
 
         // 如果点击在边距区域内，清空元素选择但保留带区选择
         if (contentClickX < 0 ||
-            contentClickX > (A4_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right) ||
+            contentClickX > (PAGE_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right) ||
             contentClickY < 0 ||
-            contentClickY > (A4_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom)) {
+            contentClickY > (PAGE_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom)) {
             // 清空元素选择，但保留带区
             if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
                 selectionManager.clearSelection();
@@ -623,13 +632,13 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                                 onUpdate={(objectId, updates, skipHistory) => {
                                     onUpdateObject(objectId, band.id, updates, skipHistory);
                                 }}
-                                onDragMultiple={(deltaX, deltaY) => {
+                                onDragMultiple={(deltaX, deltaY, skipHistory) => {
                                     const moves = selectedObjectIds?.map(k => {
                                         const [bandId, objectId] = k.split('-');
                                         return { objectId, bandId, deltaX, deltaY };
                                     }) || [];
                                     if (moves.length > 0) {
-                                        onMoveMultipleObjects(moves);
+                                        onMoveMultipleObjects(moves, skipHistory);
                                     }
                                 }}
                             />
@@ -654,13 +663,13 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                             onUpdate={(objectId, updates) => {
                                 onUpdateObject(objectId, band.id, updates);
                             }}
-                            onDragMultiple={(deltaX, deltaY) => {
+                            onDragMultiple={(deltaX, deltaY, skipHistory) => {
                                 const moves = selectedObjectIds?.map(k => {
                                     const [bandId, objectId] = k.split('-');
                                     return { objectId, bandId, deltaX, deltaY };
                                 }) || [];
                                 if (moves.length > 0) {
-                                    onMoveMultipleObjects(moves);
+                                    onMoveMultipleObjects(moves, skipHistory);
                                 }
                             }}
                             minWidth={20}
@@ -680,8 +689,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                     style={{
                         marginTop: `${PAGE_MARGINS.top}px`,
                         marginBottom: `${PAGE_MARGINS.bottom}px`,
-                        width: `${A4_WIDTH}px`,
-                        minHeight: `${A4_HEIGHT}px`,
+                        width: `${PAGE_WIDTH}px`,
+                        minHeight: `${PAGE_HEIGHT}px`,
                         position: 'relative',
                         cursor: isSelecting ? 'crosshair' : 'default',
                     }}
@@ -698,12 +707,12 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                     {state.showRulers && (
                         <>
                             <HorizontalRuler
-                                width={A4_WIDTH}
+                                width={PAGE_WIDTH}
                                 marginLeft={PAGE_MARGINS.left}
                                 zoomLevel={state.zoomLevel}
                             />
                             <VerticalRuler
-                                height={A4_HEIGHT}
+                                height={PAGE_HEIGHT}
                                 marginTop={PAGE_MARGINS.top}
                                 zoomLevel={state.zoomLevel}
                             />
@@ -713,8 +722,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                     {/* 纸张边界和边距 */}
                     {state.showPageMargins && (
                         <PageBoundary
-                            width={A4_WIDTH}
-                            height={A4_HEIGHT}
+                            width={PAGE_WIDTH}
+                            height={PAGE_HEIGHT}
                             margins={PAGE_MARGINS}  // PAGE_MARGINS 已经是像素值，不需要再次转换
                             zoomLevel={state.zoomLevel}
                         />
@@ -722,8 +731,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
 
                     {/* 网格背景 */}
                     {state.showGrid && ((() => {
-                        const contentWidth = A4_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right;
-                        const contentHeight = A4_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom;
+                        const contentWidth = PAGE_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right;
+                        const contentHeight = PAGE_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom;
                         const baseGridSize = designerOptions.gridSize || 10;
 
                         // 计算能够平均分配的网格尺寸
@@ -779,8 +788,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                         position: 'absolute',
                         top: `${PAGE_MARGINS.top}px`,
                         left: `${PAGE_MARGINS.left}px`,
-                        width: `${A4_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right}px`,
-                        height: `${A4_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom}px`,
+                        width: `${PAGE_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right}px`,
+                        height: `${PAGE_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom}px`,
                     }}>
                         {renderBoundaryLines()}
                     </div>
@@ -790,8 +799,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                         position: 'absolute',
                         top: `${PAGE_MARGINS.top}px`,
                         left: `${PAGE_MARGINS.left}px`,
-                        width: `${A4_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right}px`,
-                        height: `${A4_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom}px`,
+                        width: `${PAGE_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right}px`,
+                        height: `${PAGE_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom}px`,
                     }}>
                         {renderObjects()}
                     </div>
@@ -841,6 +850,8 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                     onCopy={onCopy}
                     onPaste={onPaste}
                     canPaste={canPaste}
+                    pageWidth={PAGE_WIDTH}
+                    pageMargins={{ left: PAGE_MARGINS.left, right: PAGE_MARGINS.right }}
                 />
             )}
         </>

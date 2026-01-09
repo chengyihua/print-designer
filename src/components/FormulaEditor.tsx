@@ -239,7 +239,7 @@ const FormulaEditor: React.FC<FormulaEditorProps> = ({
         
         setValidationResult({ valid: true, message: `校验通过，预览结果: ${execResult.result}` });
         return true;
-    }, [formula]);
+    }, [formula, dataFields]);
 
     // 确定
     const handleConfirm = useCallback(() => {

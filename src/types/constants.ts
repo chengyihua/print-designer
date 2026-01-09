@@ -349,6 +349,27 @@ export const marginPresets = {
     custom: { top: 0, right: 0, bottom: 0, left: 0, name: '自定义' , type:'custom'},
 } as const;
 
+// 默认页面设置
+export const defaultPageSettings = {
+    paperSize: 'A4' as const,
+    width: 210,
+    height: 297,
+    unit: 'mm' as const,
+    margins: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10,
+    },
+    orientation: 'portrait' as const,
+};
+
+// 纸张方向选项
+export const orientationOptions = [
+    { value: 'portrait', label: '纵向' },
+    { value: 'landscape', label: '横向' },
+] as const;
+
 // 默认字体设置
 export const defaultFontSettings = {
     fontFamily: 'Microsoft YaHei, Arial, sans-serif',

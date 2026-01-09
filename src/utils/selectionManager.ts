@@ -504,11 +504,31 @@ export class SelectionManager {
                     
                     // 线条需要较大的命中区域，特别是横线和竖线
                     const strokeWidth = lineObj.strokeWidth || 2;
-                    const hitArea = Math.max(strokeWidth * 2, 15);  // 至少 15px 的命中区域
-                    objectLeft -= hitArea;
-                    objectTop -= hitArea;
-                    objectRight += hitArea;
-                    objectBottom += hitArea;
+                    const hitArea = Math.max(strokeWidth * 3, 12);  // 基础命中区域
+                    
+                    // 横线和竖线需要更大的命中区域
+                    const isHorizontal = Math.abs(y2 - y1) < 2;  // 横线
+                    const isVertical = Math.abs(x2 - x1) < 2;    // 竖线
+                    
+                    if (isHorizontal) {
+                        // 横线：垂直方向需要更大的命中区域
+                        objectTop -= hitArea;
+                        objectBottom += hitArea;
+                        objectLeft -= hitArea / 2;
+                        objectRight += hitArea / 2;
+                    } else if (isVertical) {
+                        // 竖线：水平方向需要更大的命中区域
+                        objectLeft -= hitArea;
+                        objectRight += hitArea;
+                        objectTop -= hitArea / 2;
+                        objectBottom += hitArea / 2;
+                    } else {
+                        // 斜线：各方向适度扩展
+                        objectLeft -= hitArea;
+                        objectTop -= hitArea;
+                        objectRight += hitArea;
+                        objectBottom += hitArea;
+                    }
                 } else {
                     // 普通对象使用 x, y, width, height
                     const extraSize = 6; // DraggableObject 的额外 padding/border

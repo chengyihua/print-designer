@@ -493,7 +493,6 @@
         transform: none !important;
         page-break-after: always;
         border: none;
-        height: 1123px;
     }
     
     .preview-page:last-child {
@@ -503,6 +502,11 @@
     .page-margins{
         display: none !important;
     }
+}
+
+/* 禁用系统打印边距 */
+@page {
+    margin: 0;
 }
 
 

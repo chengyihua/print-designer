@@ -22,7 +22,7 @@ interface DraggableLineProps {
     selectedObjectIds?: string[];  // 多选的对象ID列表
     onSelect: (e: React.MouseEvent) => void;
     onUpdate: (objectId: string, updates: Partial<LineObject>, skipHistory?: boolean) => void;
-    onDragMultiple?: (deltaX: number, deltaY: number) => void;  // 多选拖动回调
+    onDragMultiple?: (deltaX: number, deltaY: number, skipHistory?: boolean) => void;  // 多选拖动回调
 }
 
 const DraggableLine: React.FC<DraggableLineProps> = ({
@@ -46,6 +46,8 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
     const containerPosRef = useRef<{ left: number; top: number; right: number; bottom: number } | null>(null);
     // 保存拖动开始时的鼠标位置，用于 Shift 锁定方向判断
     const initialMousePosRef = useRef<{ x: number; y: number } | null>(null);
+    // Shift 键锁定方向：'x' 表示只能水平移动，'y' 表示只能垂直移动
+    const lockDirectionRef = useRef<'x' | 'y' | null>(null);
 
     // 保存最新的 onUpdate 引用，避免闭包问题
     const onUpdateRef = useRef(onUpdate);
@@ -161,6 +163,12 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
 
     // 处理线条拖动开始
     const handleLineMouseDown = (e: React.MouseEvent) => {
+        // 右键点击时，触发 onSelect 以便保持多选状态
+        if (e.button === 2) {
+            e.stopPropagation();
+            onSelect(e);
+            return;
+        }
         if (!isSelected) return;
         e.stopPropagation();
         draggingRef.current = 'line';
@@ -181,6 +189,8 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
         };
         // 保存初始鼠标位置
         initialMousePosRef.current = { x: e.clientX, y: e.clientY };
+        // 重置方向锁定
+        lockDirectionRef.current = null;
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
     };
@@ -296,18 +306,45 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
         }
 
         if (dragging === 'line') {
-            // 检查是否是多选状态
+            // 检查是否是选中状态（单选或多选）
             const currentKey = `${band.id}-${object.id}`;
             const isInSelection = selectedObjectIds?.includes(currentKey);
-            const isMultiSelected = isInSelection && selectedObjectIds && selectedObjectIds.length > 1;
+            const hasSelection = isInSelection && selectedObjectIds && selectedObjectIds.length >= 1;
 
-            if (isMultiSelected && onDragMultiple) {
-                // 多选拖动
-                const deltaX = e.clientX - dragStartRef.current.x;
-                const deltaY = e.clientY - dragStartRef.current.y;
+            if (hasSelection && onDragMultiple) {
+                // 选中拖动（单选或多选）
+                let deltaX = e.clientX - dragStartRef.current.x;
+                let deltaY = e.clientY - dragStartRef.current.y;
+                
+                // Shift 键方向锁定
+                if (e.shiftKey && initialMousePosRef.current) {
+                    const totalDeltaX = e.clientX - initialMousePosRef.current.x;
+                    const totalDeltaY = e.clientY - initialMousePosRef.current.y;
+                    
+                    // 如果方向未确定，根据移动距离判断
+                    if (!lockDirectionRef.current) {
+                        const threshold = 5; // 移动超过 5px 才确定方向
+                        if (Math.abs(totalDeltaX) > threshold || Math.abs(totalDeltaY) > threshold) {
+                            lockDirectionRef.current = Math.abs(totalDeltaX) > Math.abs(totalDeltaY) ? 'x' : 'y';
+                        }
+                    }
+                    
+                    // 应用方向锁定
+                    if (lockDirectionRef.current === 'x') {
+                        deltaY = 0;
+                    } else if (lockDirectionRef.current === 'y') {
+                        deltaX = 0;
+                    }
+                } else {
+                    // 未按住 Shift，清除方向锁定
+                    lockDirectionRef.current = null;
+                }
+                
                 dragStartRef.current.x = e.clientX;
                 dragStartRef.current.y = e.clientY;
-                onDragMultiple(deltaX, deltaY);
+                if (deltaX !== 0 || deltaY !== 0) {
+                    onDragMultiple(deltaX, deltaY, true); // 拖动过程中跳过历史记录
+                }
             } else {
                 // 单选拖动整条线：使用初始位置 + 总偏移量
                 const initial = initialPosRef.current!;
@@ -334,6 +371,13 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
             const initial = initialPosRef.current!;
             const newX2 = initial.x2 + adjustedDeltaX;
             const newY2 = initial.y2 + adjustedDeltaY;
+            
+            console.log('鼠标拖动终点:', {
+                before: { x1: initial.x1, y1: initial.y1, x2: initial.x2, y2: initial.y2 },
+                delta: { deltaX: adjustedDeltaX, deltaY: adjustedDeltaY },
+                after: { x1: initial.x1, y1: initial.y1, x2: newX2, y2: newY2 }
+            });
+            
             onUpdateRef.current(objectRef.current.id, {
                 x1: initial.x1,
                 y1: initial.y1,
@@ -347,6 +391,11 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
     const handleMouseUp = (e: MouseEvent) => {
         const dragging = draggingRef.current;
 
+        // 检查是否是选中拖动（单选或多选）
+        const currentKey = `${band.id}-${object.id}`;
+        const isInSelection = selectedObjectIds?.includes(currentKey);
+        const hasSelection = isInSelection && selectedObjectIds && selectedObjectIds.length >= 1;
+
         // 如果有拖动发生，在释放时记录历史
         if (dragging !== 'none' && initialPosRef.current) {
             const initial = initialPosRef.current;
@@ -359,13 +408,18 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
                 initial.y2 !== currentObj.y2;
 
             if (hasChanged) {
-                // 记录最终状态到历史（不跳过历史）
-                onUpdateRef.current(currentObj.id, {
-                    x1: currentObj.x1,
-                    y1: currentObj.y1,
-                    x2: currentObj.x2,
-                    y2: currentObj.y2,
-                }, false);
+                if (dragging === 'line' && hasSelection && onDragMultiple) {
+                    // 选中拖动结束（单选或多选），保存历史
+                    onDragMultiple(0, 0, false);
+                } else {
+                    // 单选拖动，记录最终状态到历史（不跳过历史）
+                    onUpdateRef.current(currentObj.id, {
+                        x1: currentObj.x1,
+                        y1: currentObj.y1,
+                        x2: currentObj.x2,
+                        y2: currentObj.y2,
+                    }, false);
+                }
 
                 // 只有实际移动了才设置标志位，阻止后续 click 事件清除选中状态
                 justFinishedDraggingRef.current = true;
@@ -378,6 +432,7 @@ const DraggableLine: React.FC<DraggableLineProps> = ({
         dragStartRef.current = null;
         initialPosRef.current = null;
         initialMousePosRef.current = null;
+        lockDirectionRef.current = null;
         containerPosRef.current = null;
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);

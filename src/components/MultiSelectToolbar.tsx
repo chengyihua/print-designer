@@ -26,6 +26,8 @@ interface MultiSelectToolbarProps {
     onToggleGrid: () => void;
     onToggleRulers: () => void;
     onTogglePageMargins: () => void;
+    // 页面设置
+    onPageSettings: () => void;
     // 添加控件
     onAddControl: (type: string, fieldName?: string) => void;
     // 批量添加数据字段
@@ -107,6 +109,7 @@ const MultiSelectToolbar: React.FC<MultiSelectToolbarProps> = ({
     onToggleGrid,
     onToggleRulers,
     onTogglePageMargins,
+    onPageSettings,
     onAddControl,
     onAddFields,
     selectedBandId,
@@ -174,7 +177,7 @@ const MultiSelectToolbar: React.FC<MultiSelectToolbarProps> = ({
         const master = dataFields.filter(f => f.source === 'master');
         const detail = dataFields.filter(f => f.source === 'detail');
         return { master, detail };
-    }, []);
+    }, [dataFields]);
 
     // 处理添加控件
     const handleAddControlClick = useCallback((type: string) => {
@@ -436,23 +439,41 @@ const MultiSelectToolbar: React.FC<MultiSelectToolbarProps> = ({
                         // 竖线调整高度
                         const currentLength = Math.abs(y2 - y1);
                         const delta = refLineLength - currentLength;
-                        (changes as any).y2 = y2 + delta;
+                        // 考虑线条方向：如果 y2 > y1，给 y2 加 delta；否则给 y2 减 delta
+                        if (y2 >= y1) {
+                            (changes as any).y2 = y2 + delta;
+                        } else {
+                            (changes as any).y2 = y2 - delta;
+                        }
                     } else if (isHorizontal && (dimension === 'width' || dimension === 'both')) {
                         // 横线调整宽度
                         const currentLength = Math.abs(x2 - x1);
                         const delta = refLineLength - currentLength;
-                        (changes as any).x2 = x2 + delta;
+                        // 考虑线条方向：如果 x2 > x1，给 x2 加 delta；否则给 x2 减 delta
+                        if (x2 >= x1) {
+                            (changes as any).x2 = x2 + delta;
+                        } else {
+                            (changes as any).x2 = x2 - delta;
+                        }
                     }
                 } else {
                     // 参照是普通对象
                     if (isVertical && (dimension === 'height' || dimension === 'both')) {
                         // 竖线调整高度与参照对象相同
                         const delta = refDisplay.height - Math.abs(y2 - y1);
-                        (changes as any).y2 = y2 + delta;
+                        if (y2 >= y1) {
+                            (changes as any).y2 = y2 + delta;
+                        } else {
+                            (changes as any).y2 = y2 - delta;
+                        }
                     } else if (isHorizontal && (dimension === 'width' || dimension === 'both')) {
                         // 横线调整宽度与参照对象相同
                         const delta = refDisplay.width - Math.abs(x2 - x1);
-                        (changes as any).x2 = x2 + delta;
+                        if (x2 >= x1) {
+                            (changes as any).x2 = x2 + delta;
+                        } else {
+                            (changes as any).x2 = x2 - delta;
+                        }
                     }
                 }
 
@@ -935,6 +956,15 @@ const MultiSelectToolbar: React.FC<MultiSelectToolbarProps> = ({
                         <svg viewBox="0 0 24 24" width="16" height="16">
                             <path fill="none" stroke="currentColor" strokeWidth="2" d="M3 3h18v18H3z" />
                             <path fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" d="M6 6h12v12H6z" />
+                        </svg>
+                    </button>
+                    <button
+                        className="toolbar-btn"
+                        onClick={onPageSettings}
+                        title="页面设置"
+                    >
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                         </svg>
                     </button>
                 </div>

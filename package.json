@@ -1,6 +1,6 @@
 {
   "name": "print-designer",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "报表设计器 React 组件库",
   "main": "dist/print-designer.umd.js",
   "module": "dist/print-designer.es.js",

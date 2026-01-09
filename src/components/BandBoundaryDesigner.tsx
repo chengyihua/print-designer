@@ -11,6 +11,7 @@ import MultiSelectToolbar from './MultiSelectToolbar';
 import FormulaEditor from './FormulaEditor';
 import unitConverter from '../utils/unitConverter';
 import PrintPreview from './PrintPreview';
+import PageSettingsPanel from './PageSettingsPanel';
 
 const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
     options = {},
@@ -18,7 +19,9 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
     onDesignChange,
     onSave,
     data,
-    dataFields
+    dataFields,
+    initialPageSettings,
+    onPageSettingsChange,
 }) => {
     const {
         bands,
@@ -31,9 +34,12 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
         deleteSelectedObject,
         handleSave,
         updateBands,
-        A4_WIDTH,
-        A4_HEIGHT,
+        PAGE_WIDTH,
+        PAGE_HEIGHT,
         PAGE_MARGINS,
+        // 页面设置
+        pageSettings,
+        setPageSettings,
         // 撤销/恢复
         undo,
         redo,
@@ -43,6 +49,8 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
         options,
         initialDesign,
         onDesignChange,
+        initialPageSettings,
+        onPageSettingsChange,
     });
 
     const draggingRef = useRef<{
@@ -53,6 +61,8 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
 
     // 添加预览状态
     const [showPreview, setShowPreview] = useState(false);
+    // 添加页面设置面板状态
+    const [showPageSettings, setShowPageSettings] = useState(false);
     // 添加多选状态
     const [selectedObjectIds, setSelectedObjectIds] = useState<string[]>([]);
     // 焦点状态（只显示虚线框，不显示调整手柄）
@@ -163,6 +173,12 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                     newBottom = Math.max(newBottom, prevBand.actualBottom + minDistance);
                 }
 
+                // 限制不能超过内容区域高度（带区坐标是相对于内容区域的）
+                // 需要预留边界条的高度（20px），否则边界条会超出页面底部边距
+                const boundaryBarHeight = 20;
+                const contentHeight = unitConverter.toPx(PAGE_HEIGHT) - unitConverter.toPx(PAGE_MARGINS.top) - unitConverter.toPx(PAGE_MARGINS.bottom) - boundaryBarHeight;
+                newBottom = Math.min(newBottom, contentHeight);
+
                 const heightChange = newBottom - originalBottom;
 
                 // 使用 map 确保每个修改的 band 都是新的引用
@@ -229,10 +245,10 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
 
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
-    }, [bands, designerOptions.bandSpacing, setBands, updateState]);
+    }, [bands, designerOptions.bandSpacing, setBands, updateState, PAGE_HEIGHT, PAGE_MARGINS]);
 
     // 处理多对象移动
-    const handleMoveMultipleObjects = useCallback((moves: Array<{ objectId: string, bandId: string, deltaX: number, deltaY: number }>) => {
+    const handleMoveMultipleObjects = useCallback((moves: Array<{ objectId: string, bandId: string, deltaX: number, deltaY: number }>, skipHistory: boolean = false) => {
         setBands(prevBands => {
             // 使用 map 确保修改的 band 也是新的引用，React 才能正确检测变化
             return prevBands.map(band => {
@@ -267,7 +283,7 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                     })
                 };
             });
-        });
+        }, skipHistory);
     }, [setBands]);
 
     // 处理多对象尺寸调整 (Ctrl + 方向键)
@@ -283,13 +299,42 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                         const resize = resizesForBand.find(r => r.objectId === obj.id);
                         if (!resize) return obj;
 
-                        // 线条类型调整终点位置
+                        // 线条类型：固定左边/上边的点，调整右边/下边的点
                         if (obj.type === 'line') {
                             const lineObj = obj as any;
+                            let x1 = lineObj.x1 ?? obj.x;
+                            let y1 = lineObj.y1 ?? obj.y;
+                            let x2 = lineObj.x2 ?? obj.x + obj.width;
+                            let y2 = lineObj.y2 ?? obj.y;
+
+                            // 水平方向：固定左边的点，调整右边的点
+                            if (resize.deltaWidth !== 0) {
+                                if (x1 <= x2) {
+                                    // x1在左边，调整x2
+                                    x2 += resize.deltaWidth;
+                                } else {
+                                    // x2在左边，调整x1
+                                    x1 += resize.deltaWidth;
+                                }
+                            }
+
+                            // 垂直方向：固定上边的点，调整下边的点
+                            if (resize.deltaHeight !== 0) {
+                                if (y1 <= y2) {
+                                    // y1在上边，调整y2
+                                    y2 += resize.deltaHeight;
+                                } else {
+                                    // y2在上边，调整y1
+                                    y1 += resize.deltaHeight;
+                                }
+                            }
+
                             return {
                                 ...obj,
-                                x2: (lineObj.x2 ?? obj.x + obj.width) + resize.deltaWidth,
-                                y2: (lineObj.y2 ?? obj.y) + resize.deltaHeight,
+                                x1: x1,
+                                y1: y1,
+                                x2: x2,
+                                y2: y2,
                             };
                         }
 
@@ -862,6 +907,7 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                 onToggleGrid={() => updateState({ showGrid: !state.showGrid })}
                 onToggleRulers={toggleRulers}
                 onTogglePageMargins={togglePageMargins}
+                onPageSettings={() => setShowPageSettings(true)}
                 onAddControl={handleAddControl}
                 onAddFields={handleAddFields}
                 selectedBandId={state.selectedBand}
@@ -874,8 +920,8 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                         bands={bands}
                         state={state}
                         designerOptions={designerOptions}
-                        A4_WIDTH={unitConverter.toPx(A4_WIDTH)}
-                        A4_HEIGHT={unitConverter.toPx(A4_HEIGHT)}
+                        PAGE_WIDTH={unitConverter.toPx(PAGE_WIDTH)}
+                        PAGE_HEIGHT={unitConverter.toPx(PAGE_HEIGHT)}
                         PAGE_MARGINS={unitConverter.convertMargins(PAGE_MARGINS)}
                         onSelectBand={(bandId, e) => {
                             selectBand(bandId);
@@ -1017,10 +1063,12 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                 <PrintPreview
                     bands={bands}
                     dataFields={dataFields || []}
-                    pageWidth={unitConverter.toPx(A4_WIDTH)}
-                    pageHeight={unitConverter.toPx(A4_HEIGHT)}
+                    pageWidth={unitConverter.toPx(PAGE_WIDTH)}
+                    pageHeight={unitConverter.toPx(PAGE_HEIGHT)}
                     pageMargins={unitConverter.convertMargins(PAGE_MARGINS as { top: number; bottom: number; left: number; right: number })}
-                    data={data} // 使用你的数据源
+                    paperWidthMm={PAGE_WIDTH}
+                    paperHeightMm={PAGE_HEIGHT}
+                    data={data}
                     onClose={handleClosePreview}
                 />
             )}
@@ -1032,6 +1080,15 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                     value=""
                     onConfirm={handleConfirmAddCalculated}
                     onCancel={handleCancelAddCalculated}
+                />
+            )}
+
+            {/* 页面设置面板 */}
+            {showPageSettings && (
+                <PageSettingsPanel
+                    pageSettings={pageSettings}
+                    onSettingsChange={setPageSettings}
+                    onClose={() => setShowPageSettings(false)}
                 />
             )}
         </div>

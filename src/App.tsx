@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import BandBoundaryDesigner from './components/BandBoundaryDesigner';
 import templateDesign from './temp.json';
-import type { Band, DataField } from './types/types';
+import type { Band, DataField, PageSettings } from './types/types';
 import enhancedSampleData from "./enhancedSampleData.json"
+
+// 设计数据类型
+interface DesignData {
+  bands?: Band[];
+  pageSettings?: PageSettings;
+  version?: string;
+  createdAt?: string;
+}
 
 // 默认server数据字段定义（来自服务器加载前的回退值）
 const defaultDataFields: DataField[] = [
@@ -28,9 +36,9 @@ const defaultDataFields: DataField[] = [
 ]
 
 function App() {
-  const [initialDesign, setInitialDesign] = useState<Band[] | undefined>();
-  const [dataFields, setDataFields] = useState<DataField[]>(defaultDataFields);
-  const [previewData, setPreviewData] = useState<Record<string, any>>(enhancedSampleData);
+  const [design, setDesign] = useState<DesignData | undefined>();
+  const [dataFields] = useState<DataField[]>(defaultDataFields);
+  const [previewData] = useState<Record<string, any>>(enhancedSampleData);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,18 +46,16 @@ function App() {
     fetch('/api/get-design')
       .then(res => res.json())
       .then(data => {
-        setInitialDesign(data.bands as Band[]);
+        setDesign(data);
         setLoading(false);
       })
       .catch(() => {
         // 如果服务器加载失败，尝试从本地存储加载
-        if (localStorage.getItem('design')) {
-          setInitialDesign(JSON.parse(localStorage.getItem('design') || '{}').bands as Band[]);
+        const localDesign = localStorage.getItem('design');
+        if (localDesign) {
+          setDesign(JSON.parse(localDesign));
         } else {
-          const savedDesign = templateDesign;//localStorage.getItem('design');
-          if (savedDesign) {
-            setInitialDesign(savedDesign.bands as Band[]);
-          }
+          setDesign(templateDesign as DesignData);
         }
         setLoading(false);
       });
@@ -62,16 +68,17 @@ function App() {
   return (
     <BandBoundaryDesigner
       dataFields={dataFields}
-      initialDesign={initialDesign}
+      initialDesign={design?.bands}
+      initialPageSettings={design?.pageSettings}
       data={previewData}
-      onSave={(design) => {
-        console.log('Saving design:', JSON.stringify(design));
+      onSave={(newDesign) => {
+        console.log('Saving design:', JSON.stringify(newDesign));
         // 同时保存到服务器和本地
         fetch('/api/save-design', {
           method: 'POST',
-          body: JSON.stringify(design)
+          body: JSON.stringify(newDesign)
         });
-        localStorage.setItem('design', JSON.stringify(design));
+        localStorage.setItem('design', JSON.stringify(newDesign));
       }}
     />
   );

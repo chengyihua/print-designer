@@ -20,11 +20,15 @@ interface ContextMenuProps {
     onCopy?: () => void;
     onPaste?: () => void;
     canPaste?: boolean;
+    // 页面尺寸（用于页面对齐）
+    pageWidth?: number;
+    pageMargins?: { left: number; right: number };
 }
 
 // 对齐类型
 type AlignType = 'left' | 'right' | 'top' | 'bottom' | 'horizontal-center' | 'vertical-center';
 type DistributeType = 'horizontal' | 'vertical';
+type PageAlignType = 'page-left' | 'page-center' | 'page-right';
 
 // 计算元素的实际显示尺寸
 const getDisplaySize = (obj: ControlObject) => {
@@ -86,6 +90,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     onCopy,
     onPaste,
     canPaste = false,
+    pageWidth,
+    pageMargins,
 }) => {
     const menuRef = useRef<HTMLDivElement>(null);
     const [adjustedPosition, setAdjustedPosition] = useState({ x, y });
@@ -355,19 +361,37 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                     if (isVertical && (dimension === 'height' || dimension === 'both')) {
                         const currentLength = Math.abs(y2 - y1);
                         const delta = refLineLength - currentLength;
-                        (changes as any).y2 = y2 + delta;
+                        // 考虑线条方向：如果 y2 > y1，给 y2 加 delta；否则给 y2 减 delta
+                        if (y2 >= y1) {
+                            (changes as any).y2 = y2 + delta;
+                        } else {
+                            (changes as any).y2 = y2 - delta;
+                        }
                     } else if (isHorizontal && (dimension === 'width' || dimension === 'both')) {
                         const currentLength = Math.abs(x2 - x1);
                         const delta = refLineLength - currentLength;
-                        (changes as any).x2 = x2 + delta;
+                        // 考虑线条方向：如果 x2 > x1，给 x2 加 delta；否则给 x2 减 delta
+                        if (x2 >= x1) {
+                            (changes as any).x2 = x2 + delta;
+                        } else {
+                            (changes as any).x2 = x2 - delta;
+                        }
                     }
                 } else {
                     if (isVertical && (dimension === 'height' || dimension === 'both')) {
                         const delta = refDisplay.height - Math.abs(y2 - y1);
-                        (changes as any).y2 = y2 + delta;
+                        if (y2 >= y1) {
+                            (changes as any).y2 = y2 + delta;
+                        } else {
+                            (changes as any).y2 = y2 - delta;
+                        }
                     } else if (isHorizontal && (dimension === 'width' || dimension === 'both')) {
                         const delta = refDisplay.width - Math.abs(x2 - x1);
-                        (changes as any).x2 = x2 + delta;
+                        if (x2 >= x1) {
+                            (changes as any).x2 = x2 + delta;
+                        } else {
+                            (changes as any).x2 = x2 - delta;
+                        }
                     }
                 }
 
@@ -481,6 +505,68 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         onUpdateObjects(updates);
         onClose();
     }, [selectedObjects, onUpdateObjects, onClose]);
+
+    // 页面对齐操作（相对于页面宽度）
+    const handlePageAlign = useCallback((type: PageAlignType) => {
+        if (selectedObjects.length === 0) return;
+        if (!pageWidth || !pageMargins) return;
+
+        // 内容区域宽度（页面宽度减去左右边距）
+        // 对象的 x 坐标是相对于内容区域的，即 x=0 在边距后的左边缘
+        const contentWidth = pageWidth - pageMargins.left - pageMargins.right;
+
+        // 计算所有选中对象的整体边界框
+        let groupLeft = Infinity;
+        let groupRight = -Infinity;
+
+        selectedObjects.forEach(({ object }) => {
+            const objDisplay = getDisplaySize(object);
+            const objLeft = objDisplay.x;
+            const objRight = objDisplay.x + objDisplay.width;
+            
+            if (objLeft < groupLeft) groupLeft = objLeft;
+            if (objRight > groupRight) groupRight = objRight;
+        });
+
+        const groupWidth = groupRight - groupLeft;
+
+        // 计算整体需要移动的偏移量
+        let deltaX: number;
+        switch (type) {
+            case 'page-left':
+                deltaX = 0 - groupLeft;
+                break;
+            case 'page-center':
+                deltaX = (contentWidth - groupWidth) / 2 - groupLeft;
+                break;
+            case 'page-right':
+                deltaX = contentWidth - groupRight;
+                break;
+        }
+
+        const updates: Array<{ bandId: string; objectId: string; changes: Partial<ControlObjectAll> }> = [];
+
+        selectedObjects.forEach(({ object, bandId }) => {
+            const changes: Partial<ControlObjectAll> = {};
+
+            if (object.type === 'line') {
+                const lineObj = object as any;
+                const x1 = lineObj.x1 ?? object.x;
+                const x2 = lineObj.x2 ?? object.x + object.width;
+
+                (changes as any).x1 = x1 + deltaX;
+                (changes as any).x2 = x2 + deltaX;
+                changes.x = object.x + deltaX;
+            } else {
+                changes.x = object.x + deltaX;
+            }
+
+            updates.push({ bandId, objectId: object.id, changes });
+        });
+
+        onUpdateObjects(updates);
+        onClose();
+    }, [selectedObjects, pageWidth, pageMargins, onUpdateObjects, onClose]);
 
     // 包装操作并关闭菜单
     const handleAction = (action: () => void) => {
@@ -609,6 +695,24 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                     </div>
                     <div className="context-menu-item" onClick={handleSendToBack}>
                         <span className="menu-label">置于底层</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* 页面位置子菜单 */}
+            <div className="context-menu-item context-menu-submenu" data-disabled={!hasSelection || !pageWidth}>
+                <span className="menu-icon">↔</span>
+                <span className="menu-label">页面位置</span>
+                <span className="menu-arrow">▸</span>
+                <div className="context-submenu">
+                    <div className="context-menu-item" onClick={() => handlePageAlign('page-left')}>
+                        <span className="menu-label">居左</span>
+                    </div>
+                    <div className="context-menu-item" onClick={() => handlePageAlign('page-center')}>
+                        <span className="menu-label">居中</span>
+                    </div>
+                    <div className="context-menu-item" onClick={() => handlePageAlign('page-right')}>
+                        <span className="menu-label">居右</span>
                     </div>
                 </div>
             </div>

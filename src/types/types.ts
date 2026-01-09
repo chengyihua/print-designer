@@ -102,6 +102,27 @@ export interface DataField {
     source: 'master' | 'detail';
 }
 
+// 页面设置类型
+export interface PageSettings {
+    /** 纸张类型 */
+    paperSize: 'A4' | 'A3' | 'A5' | 'B4' | 'B5' | 'Letter' | 'Legal' | 'Custom';
+    /** 纸张宽度（mm 或 inch，根据 unit） */
+    width: number;
+    /** 纸张高度（mm 或 inch，根据 unit） */
+    height: number;
+    /** 单位 */
+    unit: 'mm' | 'in';
+    /** 页边距 */
+    margins: {
+        top: number;
+        bottom: number;
+        left: number;
+        right: number;
+    };
+    /** 纸张方向 */
+    orientation: 'portrait' | 'landscape';
+}
+
 export interface BandBoundaryDesignerProps {
     options?: Partial<DesignerOptions>;
     initialDesign?: Band[];
@@ -111,4 +132,8 @@ export interface BandBoundaryDesignerProps {
     /** 预览数据源 */
     data?: Record<string, any>;
     dataFields: DataField[];
+    /** 初始页面设置 */
+    initialPageSettings?: PageSettings;
+    /** 页面设置变更回调 */
+    onPageSettingsChange?: (settings: PageSettings) => void;
 }

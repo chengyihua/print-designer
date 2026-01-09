@@ -25,6 +25,10 @@ interface PrintPreviewProps {
     pageHeight?: number;
     pageMargins?: { top: number; bottom: number; left: number; right: number };
     showPageNumbers?: boolean;
+    /** 纸张宽度(mm)，用于 PDF 导出 */
+    paperWidthMm?: number;
+    /** 纸张高度(mm)，用于 PDF 导出 */
+    paperHeightMm?: number;
 }
 
 const PrintPreview: React.FC<PrintPreviewProps> = ({
@@ -36,6 +40,8 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
     pageHeight = 1123,
     showPageNumbers = true,
     pageMargins = { top: 40, bottom: 40, left: 40, right: 40 },
+    paperWidthMm = 210,
+    paperHeightMm = 297,
 }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [zoomLevel, setZoomLevel] = useState(1);
@@ -53,15 +59,13 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
     }), [bands]);
 
     // 计算分页
-    const { rowsPerPage, totalPages, singleRowHeight, minTopOffset } = useMemo(() => {
+    const { rowsPerPage, totalPages, singleRowHeight, minTopOffset, hasFooterOnlyPage, footerSplitY } = useMemo(() => {
         if (!detailBand || !data?.[detailDataKey]) {
-            return { rowsPerPage: 0, totalPages: 1, singleRowHeight: 0, minTopOffset: 0 };
+            return { rowsPerPage: 0, totalPages: 1, singleRowHeight: 0, minTopOffset: 0, hasFooterOnlyPage: false, footerSplitY: 0 };
         }
-        
+            
         // 单行高度 = 带区高度 - 对象顶部偏移
         const bandHeight = detailBand.actualBottom - detailBand.top;
-        // 计算对象的最小顶部偏移（相对于带区）
-        // 只计算在带区可视范围内的对象
         const visibleObjects = detailBand.objects?.filter(obj => 
             obj.y >= detailBand.top && obj.y < detailBand.actualBottom
         ) || [];
@@ -69,41 +73,94 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             ? Math.min(...visibleObjects.map(obj => obj.y - detailBand.top))
             : 0;
         const singleRowHeight = bandHeight - minTopOffset;
-        // 页面可用高度
         const usableHeight = pageHeight - pageMargins.top - pageMargins.bottom;
-        
-        // 计算固定带区总高度
+            
+        // 计算固定带区总高度（每页都要显示的）
         let fixedBandsHeight = 0;
-        
-        // 头部带区：每页都显示
         if (headerBand) fixedBandsHeight += headerBand.actualBottom - headerBand.top;
         
-        // 汇总带区：如果是“每页底部显示”模式，需要预留空间
         const summaryDisplayMode = summaryBand?.summaryDisplayMode || 'atEnd';
         if (summaryBand && summaryDisplayMode === 'perPage') {
             fixedBandsHeight += summaryBand.actualBottom - summaryBand.top;
         }
-        
+            
         // 可用明细高度
         const availableDetailHeight = usableHeight - fixedBandsHeight;
         const rowsPerPage = Math.max(1, Math.floor(availableDetailHeight / singleRowHeight));
         const detailItems = data[detailDataKey] as any[];
         const totalProducts = detailItems.length;
-        const totalPages = Math.max(1, Math.ceil(totalProducts / rowsPerPage));
-
-        // console.log('分页计算:', {
-        //     summaryDisplayMode,
-        //     singleRowHeight,
-        //     usableHeight,
-        //     fixedBandsHeight,
-        //     availableDetailHeight,
-        //     rowsPerPage,
-        //     totalProducts,
-        //     totalPages
-        // });
-
-        return { rowsPerPage, totalPages, singleRowHeight, minTopOffset };
-    }, [detailBand, data, pageHeight, pageMargins, headerBand, summaryBand]);
+            
+        // 计算初始总页数
+        let totalPages = Math.max(1, Math.ceil(totalProducts / rowsPerPage));
+        let hasFooterOnlyPage = false;
+        let footerSplitY = 0;  // 脚注带分割点（相对于脚注带顶部）
+        
+        // 计算汇总带和脚注带的高度
+        const summaryHeight = (summaryBand && summaryDisplayMode === 'atEnd') 
+            ? summaryBand.actualBottom - summaryBand.top : 0;
+        const footerHeight = footerBand ? footerBand.actualBottom - footerBand.top : 0;
+        
+        if (footerHeight > 0 && totalProducts > 0) {
+            // 计算最后一页明细显示完后的剩余空间
+            const lastPageStartIndex = (totalPages - 1) * rowsPerPage;
+            const lastPageRowCount = totalProducts - lastPageStartIndex;
+            const lastPageDetailHeight = lastPageRowCount * singleRowHeight;
+            let remainingHeight = usableHeight - fixedBandsHeight - lastPageDetailHeight - summaryHeight;
+            
+            if (remainingHeight < footerHeight) {
+                // 脚注带放不下，需要精细计算能放下哪些对象
+                if (remainingHeight > 0 && footerBand) {
+                    // 按对象的底部位置排序，找到能放下的最大范围
+                    const footerObjects = footerBand.objects || [];
+                    const sortedObjects = [...footerObjects]
+                        .map(obj => {
+                            let objTop: number, objBottom: number;
+                            if (obj.type === 'line') {
+                                // 线条使用 y1, y2 计算位置
+                                const lineObj = obj as any;
+                                const y1 = lineObj.y1 ?? obj.y;
+                                const y2 = lineObj.y2 ?? obj.y;
+                                objTop = Math.min(y1, y2) - footerBand.top;
+                                objBottom = Math.max(y1, y2) - footerBand.top;
+                            } else {
+                                objTop = obj.y - footerBand.top;
+                                objBottom = objTop + obj.height;
+                            }
+                            return { obj, objTop, objBottom };
+                        })
+                        .sort((a, b) => a.objBottom - b.objBottom);
+                    
+                    // 找到能完整放下的最大分割点
+                    footerSplitY = 0;
+                    for (const { objBottom } of sortedObjects) {
+                        if (objBottom <= remainingHeight) {
+                            footerSplitY = objBottom;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    // 如果有部分对象能放下，就分割渲染
+                    if (footerSplitY > 0) {
+                        hasFooterOnlyPage = true;  // 需要新页显示剩余部分
+                        totalPages = totalPages + 1;
+                    } else {
+                        // 一个对象都放不下，整个脚注带移到新页
+                        hasFooterOnlyPage = true;
+                        totalPages = totalPages + 1;
+                        footerSplitY = 0;
+                    }
+                } else {
+                    // 没有剩余空间，整个脚注带移到新页
+                    hasFooterOnlyPage = true;
+                    totalPages = totalPages + 1;
+                    footerSplitY = 0;
+                }
+            }
+        }
+    
+        return { rowsPerPage, totalPages, singleRowHeight, minTopOffset, hasFooterOnlyPage, footerSplitY };
+    }, [detailBand, data, pageHeight, pageMargins, headerBand, summaryBand, footerBand, detailDataKey]);
 
     // 获取当前页数据 - 改为获取所有页的数据
     const allPagesData = useMemo(() => {
@@ -111,18 +168,35 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
         if (!detailBand || !detailItems) return [];
 
         const pages = [];
-        for (let page = 1; page <= totalPages; page++) {
+        // 如果有脚注专用页，明细数据只分配到前 totalPages-1 页
+        const pagesWithDetail = hasFooterOnlyPage ? totalPages - 1 : totalPages;
+        
+        for (let page = 1; page <= pagesWithDetail; page++) {
             const startIndex = (page - 1) * rowsPerPage;
             const endIndex = Math.min(startIndex + rowsPerPage, detailItems.length);
+            
             pages.push({
                 pageNumber: page,
                 items: detailItems.slice(startIndex, endIndex),
                 startIndex,
-                totalItems: detailItems.length
+                totalItems: detailItems.length,
+                isFooterOnlyPage: false
             });
         }
+        
+        // 如果有脚注专用页，添加一个空的页面数据
+        if (hasFooterOnlyPage) {
+            pages.push({
+                pageNumber: totalPages,
+                items: [],  // 脚注专用页没有明细数据
+                startIndex: detailItems.length,
+                totalItems: detailItems.length,
+                isFooterOnlyPage: true
+            });
+        }
+        
         return pages;
-    }, [detailBand, data, rowsPerPage, totalPages]);
+    }, [detailBand, data, rowsPerPage, totalPages, detailDataKey, hasFooterOnlyPage]);
 
     // 获取所有浮动图片（以页面为基准定位）
     const floatingImages = useMemo(() => {
@@ -161,15 +235,16 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
         await new Promise(resolve => setTimeout(resolve, 100));
 
         try {
-            // 创建 PDF 文档 (A4 尺寸)
+            // 根据纸张尺寸创建 PDF 文档
+            const isLandscape = paperWidthMm > paperHeightMm;
             const pdf = new jsPDF({
-                orientation: 'portrait',
+                orientation: isLandscape ? 'landscape' : 'portrait',
                 unit: 'mm',
-                format: 'a4'
+                format: [Math.min(paperWidthMm, paperHeightMm), Math.max(paperWidthMm, paperHeightMm)]
             });
 
-            const pdfWidth = 210; // A4 宽度 mm
-            const pdfHeight = 297; // A4 高度 mm
+            const pdfWidth = paperWidthMm;
+            const pdfHeight = paperHeightMm;
 
             // 遍历所有页面
             for (let i = 0; i < totalPages; i++) {
@@ -213,7 +288,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             setShowMargins(prevShowMargins);
             setIsExporting(false);
         }
-    }, [isExporting, totalPages, showMargins]);
+    }, [isExporting, totalPages, showMargins, paperWidthMm, paperHeightMm]);
 
     // 计算带区背景色（支持公式计算）
     const getBandBackgroundColor = useCallback((band: Band, context?: {
@@ -307,7 +382,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                 {band.objects
                     .filter((obj) => obj.printVisible !== false && !((obj as ControlObjectAll).floating === true && obj.type === 'image'))  // 过滤掉打印不可见的元素和浮动图片
                     .map((obj) => {
-                    // 线条使用 SVG 渲染
+                    // 线条使用 div 渲染（html2canvas 对 SVG 支持有限）
                     if (obj.type === 'line') {
                         const lineObj = obj as any;
                         const x1 = lineObj.x1 ?? obj.x;
@@ -318,44 +393,34 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                         const strokeWidth = lineObj.strokeWidth || 1;
                         const lineStyle = lineObj.lineStyle || 'solid';
                         
-                        const minX = Math.min(x1, x2);
-                        const minY = Math.min(y1, y2);
-                        const maxX = Math.max(x1, x2);
-                        const maxY = Math.max(y1, y2);
-                        const width = maxX - minX || 1;
-                        const height = maxY - minY || 1;
-                        const padding = strokeWidth + 2;
+                        // 计算线条长度和角度
+                        const dx = x2 - x1;
+                        const dy = y2 - y1;
+                        const length = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
                         
-                        const getStrokeDasharray = () => {
-                            if (lineStyle === 'dashed') return `${strokeWidth * 4} ${strokeWidth * 2}`;
-                            if (lineStyle === 'dotted') return `${strokeWidth} ${strokeWidth * 2}`;
-                            return 'none';
+                        // 边框样式
+                        const getBorderStyle = () => {
+                            if (lineStyle === 'dashed') return 'dashed';
+                            if (lineStyle === 'dotted') return 'dotted';
+                            return 'solid';
                         };
                         
                         return (
-                            <svg
+                            <div
                                 key={`${obj.id}-${rowIndex}`}
                                 style={{
                                     position: 'absolute',
-                                    left: minX - padding,
-                                    top: minY - padding,
-                                    width: width + padding * 2,
-                                    height: height + padding * 2,
-                                    overflow: 'hidden',  // 裁剪超出部分
-                                    zIndex: (obj.zIndex ?? 1) + 100,  // 带区元素在浮动图片之上
+                                    left: x1,
+                                    top: y1,
+                                    width: length,
+                                    height: 0,
+                                    borderTop: `${strokeWidth}px ${getBorderStyle()} ${strokeColor}`,
+                                    transformOrigin: '0 0',
+                                    transform: `rotate(${angle}deg)`,
+                                    zIndex: (obj.zIndex ?? 1) + 100,
                                 }}
-                            >
-                                <line
-                                    x1={x1 - minX + padding}
-                                    y1={y1 - minY + padding}
-                                    x2={x2 - minX + padding}
-                                    y2={y2 - minY + padding}
-                                    stroke={strokeColor}
-                                    strokeWidth={strokeWidth}
-                                    strokeDasharray={getStrokeDasharray()}
-                                    strokeLinecap="round"
-                                />
-                            </svg>
+                            />
                         );
                     }
                     
@@ -462,7 +527,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
     const renderBandObject = useCallback((band: Band, obj: ControlObject, index: number, pageNum: number, pageSize: number) => {
         const bandHeight = band.actualBottom - band.top;
         
-        // 线条使用 SVG 渲染
+        // 线条使用 div 渲染（html2canvas 对 SVG 支持有限）
         if (obj.type === 'line') {
             const lineObj = obj as any;
             const rawY1 = (lineObj.y1 ?? obj.y) - band.top;
@@ -511,46 +576,34 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                 }
             }
             
-            // 计算边界框
-            const minX = Math.min(x1, x2);
-            const minY = Math.min(y1, y2);
-            const maxX = Math.max(x1, x2);
-            const maxY = Math.max(y1, y2);
-            const width = maxX - minX || 1;
-            const height = maxY - minY || 1;
-            const padding = strokeWidth + 2;
+            // 计算线条长度和角度
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
             
-            // 计算虚线样式
-            const getStrokeDasharray = () => {
-                if (lineStyle === 'dashed') return `${strokeWidth * 4} ${strokeWidth * 2}`;
-                if (lineStyle === 'dotted') return `${strokeWidth} ${strokeWidth * 2}`;
-                return 'none';
+            // 边框样式
+            const getBorderStyle = () => {
+                if (lineStyle === 'dashed') return 'dashed';
+                if (lineStyle === 'dotted') return 'dotted';
+                return 'solid';
             };
             
             return (
-                <svg
+                <div
                     key={`${band.id}-${obj.id}-${index}`}
                     style={{
                         position: 'absolute',
-                        left: minX - padding,
-                        top: minY - padding,
-                        width: width + padding * 2,
-                        height: height + padding * 2,
-                        overflow: 'hidden',
+                        left: x1,
+                        top: y1,
+                        width: length,
+                        height: 0,
+                        borderTop: `${strokeWidth}px ${getBorderStyle()} ${strokeColor}`,
+                        transformOrigin: '0 0',
+                        transform: `rotate(${angle}deg)`,
                         zIndex: (obj.zIndex ?? 1) + 100,
                     }}
-                >
-                    <line
-                        x1={x1 - minX + padding}
-                        y1={y1 - minY + padding}
-                        x2={x2 - minX + padding}
-                        y2={y2 - minY + padding}
-                        stroke={strokeColor}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray={getStrokeDasharray()}
-                        strokeLinecap="round"
-                    />
-                </svg>
+                />
             );
         }
         
@@ -633,6 +686,26 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
         let currentY = pageMargins.top;
         const isLastPage = pageNum === totalPages;
         const summaryDisplayMode = summaryBand?.summaryDisplayMode || 'atEnd';
+        const isFooterOnlyPage = pageData?.isFooterOnlyPage === true;
+
+        // 如果是脚注专用页，只显示脚注带的剩余部分
+        if (isFooterOnlyPage) {
+            if (footerBand) {
+                // 如果有分割点，只显示分割点之后的对象
+                const footerHeight = footerBand.actualBottom - footerBand.top;
+                const displayHeight = footerSplitY > 0 ? footerHeight - footerSplitY : footerHeight;
+                layouts.push({
+                    band: footerBand,
+                    top: currentY,  // 从页面顶部边距开始
+                    height: displayHeight,
+                    isDetail: false,
+                    pageData: pageData,
+                    footerPart: 'after',  // 标记这是脚注带的后半部分
+                    footerSplitY: footerSplitY
+                });
+            }
+            return layouts;
+        }
 
         // 1. 头部带区
         if (headerBand) {
@@ -671,12 +744,14 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                     break;
                 case 'perGroup':
                     // 每组后显示（需要分组数据支持，暂时当作最后一页处理）
-                    showSummary = isLastPage;
+                    // 如果有脚注专用页，汇总应该在倒数第二页显示
+                    showSummary = hasFooterOnlyPage ? (pageNum === totalPages - 1) : isLastPage;
                     break;
                 case 'atEnd':
                 default:
                     // 只在最后一页显示
-                    showSummary = isLastPage;
+                    // 如果有脚注专用页，汇总应该在倒数第二页显示
+                    showSummary = hasFooterOnlyPage ? (pageNum === totalPages - 1) : isLastPage;
                     break;
             }
             
@@ -693,24 +768,41 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             }
         }
 
-        // 4. 脚注带区（只在最后一页显示）
-        if (footerBand && isLastPage) {
-            const height = footerBand.actualBottom - footerBand.top;
-            layouts.push({
-                band: footerBand,
-                top: currentY,
-                height,
-                isDetail: false,
-                pageData: pageData  // 传递 pageData 以便聚合函数访问
-            });
+        // 4. 脚注带区
+        // 如果有脚注专用页且有分割点，则倒数第二页显示脚注带前半部分
+        // 如果没有脚注专用页，则最后一页显示完整脚注带
+        if (footerBand) {
+            const footerHeight = footerBand.actualBottom - footerBand.top;
+            
+            if (hasFooterOnlyPage && footerSplitY > 0 && pageNum === totalPages - 1) {
+                // 倒数第二页，显示脚注带前半部分
+                layouts.push({
+                    band: footerBand,
+                    top: currentY,
+                    height: footerSplitY,  // 只显示分割点之前的高度
+                    isDetail: false,
+                    pageData: pageData,
+                    footerPart: 'before',  // 标记这是脚注带的前半部分
+                    footerSplitY: footerSplitY
+                });
+            } else if (isLastPage && !hasFooterOnlyPage) {
+                // 最后一页且没有脚注专用页，显示完整脚注带
+                layouts.push({
+                    band: footerBand,
+                    top: currentY,
+                    height: footerHeight,
+                    isDetail: false,
+                    pageData: pageData
+                });
+            }
         }
 
         return layouts;
-    }, [headerBand, detailBand, summaryBand, footerBand, pageMargins, totalPages, singleRowHeight]);
+    }, [headerBand, detailBand, summaryBand, footerBand, pageMargins, totalPages, singleRowHeight, hasFooterOnlyPage, footerSplitY]);
 
     // 渲染带区
     const renderBandForPage = useCallback((layout: any, pageNum: number) => {
-        const { band, top, height, isDetail, pageData } = layout;
+        const { band, top, height, isDetail, pageData, footerPart, footerSplitY: layoutFooterSplitY } = layout;
         // 当前页条数
         const pageSize = pageData?.items?.length || 0;
         // 获取带区背景色
@@ -744,9 +836,13 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             );
         } else {
             // 渲染其他带区
+            // 如果是脚注带分割渲染，需要计算偏移量
+            const isFooterSplit = footerPart === 'before' || footerPart === 'after';
+            const splitY = layoutFooterSplitY || 0;
+            
             return (
                 <div
-                    key={`${band.id}-page${pageNum}`}
+                    key={`${band.id}-page${pageNum}${footerPart ? `-${footerPart}` : ''}`}
                     className={`preview-band preview-band-${band.id}`}
                     style={{
                         position: 'absolute',
@@ -765,24 +861,49 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                             if (obj.printVisible === false) return false;
                             if (obj.floating === true && obj.type === 'image') return false;
                             
-                            // 过滤掉完全超出带区范围的对象
-                            const bandHeight = band.actualBottom - band.top;
+                            // 计算对象相对于带区顶部的位置
+                            let objTop: number, objBottom: number;
                             if (obj.type === 'line') {
                                 const lineObj = obj as any;
-                                const minY = Math.min(lineObj.y1 ?? obj.y, lineObj.y2 ?? obj.y) - band.top;
-                                const maxY = Math.max(lineObj.y1 ?? obj.y, lineObj.y2 ?? obj.y) - band.top;
-                                // 线条完全在带区上方或下方
-                                return !(maxY <= 0 || minY >= bandHeight);
+                                objTop = Math.min(lineObj.y1 ?? obj.y, lineObj.y2 ?? obj.y) - band.top;
+                                objBottom = Math.max(lineObj.y1 ?? obj.y, lineObj.y2 ?? obj.y) - band.top;
                             } else {
-                                const objTop = obj.y - band.top;
-                                const objBottom = objTop + obj.height;
-                                // 对象完全在带区上方或下方
-                                return !(objBottom <= 0 || objTop >= bandHeight);
+                                objTop = obj.y - band.top;
+                                objBottom = objTop + obj.height;
                             }
+                            
+                            // 如果是脚注带分割渲染
+                            if (isFooterSplit && splitY > 0) {
+                                if (footerPart === 'before') {
+                                    // 前半部分：只显示底部在分割点之前的对象
+                                    return objBottom <= splitY;
+                                } else if (footerPart === 'after') {
+                                    // 后半部分：只显示底部在分割点之后的对象
+                                    return objBottom > splitY;
+                                }
+                            }
+                            
+                            // 正常情况：过滤掉完全超出带区范围的对象
+                            const bandHeight = band.actualBottom - band.top;
+                            return !(objBottom <= 0 || objTop >= bandHeight);
                         })
-                        .map((obj: any, index: number) =>
-                            renderBandObject(band, obj, index, pageNum, pageSize)
-                        )}
+                        .map((obj: any, index: number) => {
+                            // 如果是脚注带后半部分，需要调整对象的 Y 坐标
+                            if (footerPart === 'after' && splitY > 0) {
+                                // 创建一个修改后的对象副本，调整 Y 坐标
+                                const adjustedObj = { ...obj };
+                                if (obj.type === 'line') {
+                                    const lineObj = adjustedObj as any;
+                                    if (lineObj.y1 !== undefined) lineObj.y1 = lineObj.y1 - splitY;
+                                    if (lineObj.y2 !== undefined) lineObj.y2 = lineObj.y2 - splitY;
+                                    adjustedObj.y = adjustedObj.y - splitY;
+                                } else {
+                                    adjustedObj.y = adjustedObj.y - splitY;
+                                }
+                                return renderBandObject(band, adjustedObj, index, pageNum, pageSize);
+                            }
+                            return renderBandObject(band, obj, index, pageNum, pageSize);
+                        })}
                 </div>
             );
         }
@@ -917,7 +1038,10 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
         <div className="print-preview-modal">
             <div className="preview-overlay" onClick={onClose} />
 
-            <div className="preview-container">
+            <div 
+                className="preview-container"
+                style={{ minWidth: `${pageWidth + 100}px` }}
+            >
                 {/* 工具栏 */}
                 <div className="preview-toolbar">
                     <div className="toolbar-left">

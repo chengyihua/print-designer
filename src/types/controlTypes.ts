@@ -265,8 +265,8 @@ export const isContainerStyleControl = (obj: ControlObject): obj is TextControl 
 };
 
 /** 判断是否有边框属性 */
-export const hasBorderControl = (obj: ControlObject): obj is TextControl | MultilineTextControl | FieldControl | CalculatedControl | ImageControl | LineControl | RectangleControl | EllipseControl | StarControl | TriangleControl | DiamondControl | PageNumberControl | CurrentDateControl => {
-  return ['text', 'multiline_text', 'field', 'calculated', 'image', 'line', 'rectangle', 'ellipse', 'star', 'triangle', 'diamond', 'page_number', 'current_date'].includes(obj.type);
+export const hasBorderControl = (obj: ControlObject): obj is TextControl | MultilineTextControl | FieldControl | CalculatedControl | ImageControl | LineControl | RectangleControl | EllipseControl | StarControl | TriangleControl | DiamondControl | PageNumberControl | CurrentDateControl | BarcodeControl | QRCodeControl => {
+  return ['text', 'multiline_text', 'field', 'calculated', 'image', 'line', 'rectangle', 'ellipse', 'star', 'triangle', 'diamond', 'page_number', 'current_date', 'barcode', 'qrcode'].includes(obj.type);
 };
 
 /** 判断是否有字段绑定属性 */

@@ -10,6 +10,7 @@ export { default as CanvasArea } from '../components/CanvasArea';
 export { default as ColorPicker } from '../components/ColorPicker';
 export { default as FormulaEditor } from '../components/FormulaEditor';
 export { default as RichTextEditor } from '../components/RichTextEditor';
+export { default as PageSettingsPanel } from '../components/PageSettingsPanel';
 
 // 类型导出
 export type {
@@ -20,6 +21,7 @@ export type {
     DesignerOptions,
     DesignerState,
     BandBoundaryDesignerProps,
+    PageSettings,
 } from '../types/types';
 
 // 常量导出
@@ -42,6 +44,8 @@ export {
     pageSizePresets,
     marginPresets,
     defaultFontSettings,
+    defaultPageSettings,
+    orientationOptions,
     getDetailDataKey,
 } from '../types/constants';
 
@@ -58,6 +62,20 @@ export {
     registerFunction,
     getRegisteredFunctions,
 } from '../utils/formulaUtils';
+
+// 打印输出工具
+export {
+    renderToHtml,
+    exportToPdf,
+    getPrintableHtml,
+    openPrintWindow,
+} from '../utils/printUtils';
+
+export type {
+    PrintOptions,
+    PdfExportOptions,
+    RenderResult,
+} from '../utils/printUtils';
 
 // Hooks 导出
 export { useBandDesigner } from '../hooks/useBandDesigner';
