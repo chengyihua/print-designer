@@ -441,7 +441,8 @@ const PrintTestPanel: React.FC = () => {
       </div>
 
       {/* 主内容区域 */}
-      <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: '20px 0', background: '#f9f9f9' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
         <h2 style={{ margin: '0 0 16px 0', fontSize: 18 }}>打印输出接口测试</h2>
         <div style={{ marginBottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button onClick={handleRefresh} style={{ ...btnStyle, background: '#faad14' }}>
@@ -470,6 +471,7 @@ const PrintTestPanel: React.FC = () => {
           style={{ fontSize: 14, lineHeight: 1.8, color: '#24292e' }}
           dangerouslySetInnerHTML={{ __html: readmeContent ? marked(readmeContent) as string : '加载文档中...' }}
         />
+        </div>
       </div>
 
       {/* 底部版权信息 */}
