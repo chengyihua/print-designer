@@ -219,7 +219,7 @@ const ObjectPropertyPanel: React.FC<ObjectPropertyPanelProps> = ({
                                 <label>位置 X:</label>
                                 <input
                                     type="number"
-                                    value={properties.x || 0}
+                                    value={Math.round(properties.x || 0)}
                                     onChange={(e) => handleChange('x', parseInt(e.target.value) || 0)}
                                 />
                             </div>
@@ -227,7 +227,7 @@ const ObjectPropertyPanel: React.FC<ObjectPropertyPanelProps> = ({
                                 <label>位置 Y:</label>
                                 <input
                                     type="number"
-                                    value={properties.y || 0}
+                                    value={Math.round(properties.y || 0)}
                                     onChange={(e) => handleChange('y', parseInt(e.target.value) || 0)}
                                 />
                             </div>
@@ -240,7 +240,7 @@ const ObjectPropertyPanel: React.FC<ObjectPropertyPanelProps> = ({
                                 <label>宽度:</label>
                                 <input
                                     type="number"
-                                    value={properties.width || 0}
+                                    value={Math.round(properties.width || 0)}
                                     onChange={(e) => handleChange('width', parseInt(e.target.value) || 0)}
                                 />
                             </div>
@@ -248,7 +248,7 @@ const ObjectPropertyPanel: React.FC<ObjectPropertyPanelProps> = ({
                                 <label>高度:</label>
                                 <input
                                     type="number"
-                                    value={properties.height || 0}
+                                    value={Math.round(properties.height || 0)}
                                     onChange={(e) => handleChange('height', parseInt(e.target.value) || 0)}
                                 />
                             </div>
