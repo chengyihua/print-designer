@@ -238,27 +238,46 @@ const PrintTestPanel: React.FC = () => {
         <!DOCTYPE html>
         <html>
         <head>
-          <title>HTML 渲染结果</title>
+          <title>HTML 渲染结果 - Print Designer</title>
           <style>
-            body { font-family: sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-            .container { display: flex; gap: 20px; height: calc(100vh - 40px); }
+            * { box-sizing: border-box; }
+            body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+            .header { display: flex; align-items: center; padding: 12px 20px; background: #24292e; color: #fff; }
+            .header h1 { margin: 0; font-size: 20px; font-weight: 600; }
+            .header .tag { margin-left: 12px; font-size: 12px; color: rgba(255,255,255,0.5); padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 4px; }
+            .header .links { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+            .header a { display: flex; align-items: center; gap: 6px; color: #fff; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 4px; background: rgba(255,255,255,0.1); }
+            .main { flex: 1; padding: 20px; background: #f5f5f5; overflow: auto; }
+            .container { display: flex; gap: 20px; height: 100%; }
             .panel { flex: 1; display: flex; flex-direction: column; }
             .panel-title { font-weight: bold; margin-bottom: 8px; color: #333; }
             .render-result { flex: 1; background: #fff; border: 1px solid #ddd; padding: 10px; overflow: auto; }
             .code-result { flex: 1; background: #1e1e1e; color: #d4d4d4; padding: 10px; overflow: auto; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+            .footer { padding: 12px 20px; background: #f6f8fa; border-top: 1px solid #e1e4e8; text-align: center; font-size: 12px; color: #586069; }
           </style>
         </head>
         <body>
-          <div class="container">
-            <div class="panel">
-              <div class="panel-title">渲染结果 (总 ${result.totalPages} 页)</div>
-              <div class="render-result">${result.html}</div>
-            </div>
-            <div class="panel">
-              <div class="panel-title">HTML 源码</div>
-              <pre class="code-result">${result.html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+          <div class="header">
+            <h1>Print Designer</h1>
+            <span class="tag">HTML 渲染结果</span>
+            <div class="links">
+              <a href="https://github.com/chengyihua/print-designer" target="_blank">GitHub</a>
+              <a href="https://www.npmjs.com/package/print-designer" target="_blank">📦 npm</a>
             </div>
           </div>
+          <div class="main">
+            <div class="container">
+              <div class="panel">
+                <div class="panel-title">渲染结果 (总 ${result.totalPages} 页)</div>
+                <div class="render-result">${result.html}</div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">HTML 源码</div>
+                <pre class="code-result">${result.html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+              </div>
+            </div>
+          </div>
+          <div class="footer">© 2024 程宜华 | CC BY-NC 4.0 | 仅限个人学习和非商业用途 | 商业授权请联系: chengyihua@acbnlink.com</div>
         </body>
         </html>
       `);
@@ -313,7 +332,48 @@ const PrintTestPanel: React.FC = () => {
   };
 
   if (showDesigner) {
-    return <App />;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        {/* 顶部栏 */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '8px 20px',
+          background: '#24292e',
+          color: '#fff',
+        }}>
+          <h1 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>Print Designer</h1>
+          <span style={{ marginLeft: 12, fontSize: 12, color: 'rgba(255,255,255,0.5)', padding: '2px 8px', background: 'rgba(255,255,255,0.1)', borderRadius: 4 }}>
+            设计器
+          </span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <a href="https://github.com/chengyihua/print-designer" target="_blank" rel="noopener noreferrer"
+              style={{ color: '#fff', textDecoration: 'none', fontSize: 13, padding: '4px 10px', borderRadius: 4, background: 'rgba(255,255,255,0.1)' }}>
+              GitHub
+            </a>
+            <a href="https://www.npmjs.com/package/print-designer" target="_blank" rel="noopener noreferrer"
+              style={{ color: '#fff', textDecoration: 'none', fontSize: 13, padding: '4px 10px', borderRadius: 4, background: 'rgba(255,255,255,0.1)' }}>
+              📦 npm
+            </a>
+          </div>
+        </div>
+        {/* 设计器 */}
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <App />
+        </div>
+        {/* 底部版权 */}
+        <div style={{
+          padding: '8px 20px',
+          background: '#f6f8fa',
+          borderTop: '1px solid #e1e4e8',
+          textAlign: 'center',
+          fontSize: 11,
+          color: '#586069',
+        }}>
+          © 2024 程宜华 | CC BY-NC 4.0 | 商业授权: chengyihua@acbnlink.com
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
