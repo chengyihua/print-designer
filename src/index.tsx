@@ -465,20 +465,9 @@ const PrintTestPanel: React.FC = () => {
         </div>
 
         {/* README 文档 */}
-        <h3 style={{ margin: '20px 0 12px 0', fontSize: 16 }}>项目文档</h3>
         <div 
-          style={{
-            background: '#f6f8fa',
-            border: '1px solid #e1e4e8',
-            borderRadius: 8,
-            padding: 20,
-            margin: '0 0 20px 0',
-            fontSize: 14,
-            lineHeight: 1.8,
-            color: '#24292e',
-            maxHeight: 500,
-            overflow: 'auto',
-          }}
+          className="markdown-body"
+          style={{ fontSize: 14, lineHeight: 1.8, color: '#24292e' }}
           dangerouslySetInnerHTML={{ __html: readmeContent ? marked(readmeContent) as string : '加载文档中...' }}
         />
       </div>
