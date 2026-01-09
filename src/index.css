@@ -49,11 +49,12 @@ code {
 }
 
 .markdown-body pre {
-  background: #1e1e1e;
-  color: #d4d4d4;
+  background: #f6f8fa;
+  color: #24292e;
   padding: 16px;
   border-radius: 6px;
   overflow-x: auto;
+  border: 1px solid #e1e4e8;
 }
 
 .markdown-body pre code {
