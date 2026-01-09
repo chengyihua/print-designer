@@ -491,6 +491,31 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
     };
 
 
+    // 渲染带区背景（激活状态高亮）
+    const renderBandBackgrounds = () => {
+        return bands.map((band) => {
+            const height = Math.max(0, band.actualBottom - band.top);
+            const isActive = state.selectedBand === band.id;
+            
+            return (
+                <div
+                    key={`band-bg-${band.id}`}
+                    style={{
+                        position: 'absolute',
+                        top: `${band.top}px`,
+                        left: 0,
+                        right: 0,
+                        height: `${height}px`,
+                        backgroundColor: isActive ? 'rgba(24, 144, 255, 0.06)' : 'transparent',
+                        borderLeft: isActive ? '3px solid #1890ff' : '3px solid transparent',
+                        pointerEvents: 'none',
+                        transition: 'background-color 0.15s, border-color 0.15s',
+                    }}
+                />
+            );
+        });
+    };
+
     // 渲染带区边界线
     const renderBoundaryLines = () => {
         return bands.map((band) => {
@@ -791,6 +816,7 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
                         width: `${PAGE_WIDTH - PAGE_MARGINS.left - PAGE_MARGINS.right}px`,
                         height: `${PAGE_HEIGHT - PAGE_MARGINS.top - PAGE_MARGINS.bottom}px`,
                     }}>
+                        {renderBandBackgrounds()}
                         {renderBoundaryLines()}
                     </div>
 
