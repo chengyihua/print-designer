@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { marked } from 'marked';
 
 // 打印输出接口测试
 import { renderToHtml, exportToPdf, getPrintableHtml, openPrintWindow } from './utils/printUtils';
@@ -369,21 +370,21 @@ const PrintTestPanel: React.FC = () => {
 
         {/* README 文档 */}
         <h3 style={{ margin: '20px 0 12px 0', fontSize: 16 }}>项目文档</h3>
-        <pre style={{
-          background: '#f6f8fa',
-          border: '1px solid #e1e4e8',
-          borderRadius: 8,
-          padding: 20,
-          margin: '0 0 20px 0',
-          fontSize: 14,
-          lineHeight: 1.8,
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-          fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-          color: '#24292e',
-          maxHeight: 500,
-          overflow: 'auto',
-        }}>{readmeContent || '加载文档中...'}</pre>
+        <div 
+          style={{
+            background: '#f6f8fa',
+            border: '1px solid #e1e4e8',
+            borderRadius: 8,
+            padding: 20,
+            margin: '0 0 20px 0',
+            fontSize: 14,
+            lineHeight: 1.8,
+            color: '#24292e',
+            maxHeight: 500,
+            overflow: 'auto',
+          }}
+          dangerouslySetInnerHTML={{ __html: readmeContent ? marked(readmeContent) as string : '加载文档中...' }}
+        />
 
       {htmlResult && (
         <div>
