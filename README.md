@@ -2,6 +2,8 @@
 
 一个功能强大的 React 报表设计器组件库，支持可视化设计、打印预览和 PDF 导出。
 
+**[在线演示 Demo](https://chengyihua.github.io/print-designer)**
+
 ## 特性
 
 - 📐 **可视化设计** - 拖拽式设计界面，所见即所得
