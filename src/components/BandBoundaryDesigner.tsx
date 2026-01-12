@@ -1063,11 +1063,7 @@ const BandBoundaryDesigner: React.FC<BandBoundaryDesignerProps> = ({
                 <PrintPreview
                     bands={bands}
                     dataFields={dataFields || []}
-                    pageWidth={unitConverter.toPx(PAGE_WIDTH)}
-                    pageHeight={unitConverter.toPx(PAGE_HEIGHT)}
-                    pageMargins={unitConverter.convertMargins(PAGE_MARGINS as { top: number; bottom: number; left: number; right: number })}
-                    paperWidthMm={PAGE_WIDTH}
-                    paperHeightMm={PAGE_HEIGHT}
+                    pageSettings={pageSettings}
                     data={data}
                     onClose={handleClosePreview}
                 />

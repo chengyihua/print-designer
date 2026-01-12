@@ -1,7 +1,8 @@
 
 
 import React, { useState, useMemo, useCallback, useRef } from 'react';
-import { Band, ControlObject, ControlObjectAll, DataField } from './../types/types';
+import { Band, ControlObject, ControlObjectAll, DataField, PageSettings } from './../types/types';
+import UnitConverter from './../utils/unitConverter';
 import {
     getObjectRenderData,
     getObjectCompleteStyle,
@@ -21,14 +22,9 @@ interface PrintPreviewProps {
     data: any;
     dataFields: DataField[];
     onClose: () => void;
-    pageWidth?: number;
-    pageHeight?: number;
-    pageMargins?: { top: number; bottom: number; left: number; right: number };
+    /** 页面设置 */
+    pageSettings: PageSettings;
     showPageNumbers?: boolean;
-    /** 纸张宽度(mm)，用于 PDF 导出 */
-    paperWidthMm?: number;
-    /** 纸张高度(mm)，用于 PDF 导出 */
-    paperHeightMm?: number;
 }
 
 const PrintPreview: React.FC<PrintPreviewProps> = ({
@@ -36,13 +32,31 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
     data,
     dataFields,
     onClose,
-    pageWidth = 794,
-    pageHeight = 1123,
+    pageSettings,
     showPageNumbers = true,
-    pageMargins = { top: 40, bottom: 40, left: 40, right: 40 },
-    paperWidthMm = 210,
-    paperHeightMm = 297,
 }) => {
+    // 从 pageSettings 计算页面尺寸
+    const { pageWidth, pageHeight, pageMargins, paperWidthMm, paperHeightMm } = useMemo(() => {
+        const widthMm = pageSettings.orientation === 'landscape'
+            ? Math.max(pageSettings.width, pageSettings.height)
+            : Math.min(pageSettings.width, pageSettings.height);
+        const heightMm = pageSettings.orientation === 'landscape'
+            ? Math.min(pageSettings.width, pageSettings.height)
+            : Math.max(pageSettings.width, pageSettings.height);
+        
+        return {
+            pageWidth: Math.round(UnitConverter.toPx(widthMm, 'mm')),
+            pageHeight: Math.round(UnitConverter.toPx(heightMm, 'mm')),
+            pageMargins: {
+                top: Math.round(UnitConverter.toPx(pageSettings.margins.top, 'mm')),
+                bottom: Math.round(UnitConverter.toPx(pageSettings.margins.bottom, 'mm')),
+                left: Math.round(UnitConverter.toPx(pageSettings.margins.left, 'mm')),
+                right: Math.round(UnitConverter.toPx(pageSettings.margins.right, 'mm')),
+            },
+            paperWidthMm: widthMm,
+            paperHeightMm: heightMm,
+        };
+    }, [pageSettings]);
     const [currentPage, setCurrentPage] = useState(1);
     const [zoomLevel, setZoomLevel] = useState(1);
     const [showMargins, setShowMargins] = useState(true);

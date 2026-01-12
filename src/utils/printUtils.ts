@@ -23,13 +23,7 @@ export interface PrintOptions {
     /** 数据字段定义（用于确定明细数据键名） */
     dataFields?: DataField[];
     /** 页面设置（从设计器传入） */
-    pageSettings?: PageSettings;
-    /** 页面宽度(px)，如果没有 pageSettings 则使用此值，默认 794 (A4) */
-    pageWidth?: number;
-    /** 页面高度(px)，如果没有 pageSettings 则使用此值，默认 1123 (A4) */
-    pageHeight?: number;
-    /** 页边距(px)，如果没有 pageSettings 则使用此值 */
-    pageMargins?: { top: number; bottom: number; left: number; right: number };
+    pageSettings: PageSettings;
 }
 
 /** PDF 导出选项 */
@@ -48,37 +42,26 @@ export interface PdfExportOptions extends PrintOptions {
 function getPageDimensions(options: PrintOptions) {
     const { pageSettings } = options;
     
-    if (pageSettings) {
-        // 从 pageSettings 计算
-        const widthMm = pageSettings.orientation === 'landscape' 
-            ? Math.max(pageSettings.width, pageSettings.height)
-            : Math.min(pageSettings.width, pageSettings.height);
-        const heightMm = pageSettings.orientation === 'landscape'
-            ? Math.min(pageSettings.width, pageSettings.height)
-            : Math.max(pageSettings.width, pageSettings.height);
-        
-        // 使用 UnitConverter 进行单位转换
-        return {
-            pageWidth: Math.round(UnitConverter.toPx(widthMm, 'mm')),
-            pageHeight: Math.round(UnitConverter.toPx(heightMm, 'mm')),
-            pageMargins: {
-                top: Math.round(UnitConverter.toPx(pageSettings.margins.top, 'mm')),
-                bottom: Math.round(UnitConverter.toPx(pageSettings.margins.bottom, 'mm')),
-                left: Math.round(UnitConverter.toPx(pageSettings.margins.left, 'mm')),
-                right: Math.round(UnitConverter.toPx(pageSettings.margins.right, 'mm')),
-            },
-            paperWidthMm: widthMm,
-            paperHeightMm: heightMm,
-        };
-    }
+    // 从 pageSettings 计算
+    const widthMm = pageSettings.orientation === 'landscape' 
+        ? Math.max(pageSettings.width, pageSettings.height)
+        : Math.min(pageSettings.width, pageSettings.height);
+    const heightMm = pageSettings.orientation === 'landscape'
+        ? Math.min(pageSettings.width, pageSettings.height)
+        : Math.max(pageSettings.width, pageSettings.height);
     
-    // 使用直接传入的参数或默认值
+    // 使用 UnitConverter 进行单位转换
     return {
-        pageWidth: options.pageWidth ?? 794,
-        pageHeight: options.pageHeight ?? 1123,
-        pageMargins: options.pageMargins ?? { top: 40, bottom: 40, left: 40, right: 40 },
-        paperWidthMm: 210,
-        paperHeightMm: 297,
+        pageWidth: Math.round(UnitConverter.toPx(widthMm, 'mm')),
+        pageHeight: Math.round(UnitConverter.toPx(heightMm, 'mm')),
+        pageMargins: {
+            top: Math.round(UnitConverter.toPx(pageSettings.margins.top, 'mm')),
+            bottom: Math.round(UnitConverter.toPx(pageSettings.margins.bottom, 'mm')),
+            left: Math.round(UnitConverter.toPx(pageSettings.margins.left, 'mm')),
+            right: Math.round(UnitConverter.toPx(pageSettings.margins.right, 'mm')),
+        },
+        paperWidthMm: widthMm,
+        paperHeightMm: heightMm,
     };
 }
 

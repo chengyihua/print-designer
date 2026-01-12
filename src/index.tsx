@@ -137,6 +137,7 @@ window.printTest = {
       template: (templateDesign as any).bands as Band[],
       data: enhancedSampleData,
       dataFields: testDataFields,
+      pageSettings: defaultPageSettings,
     });
     console.log('✅ renderToHtml 结果:');
     console.log('  - 总页数:', result.totalPages);
@@ -154,6 +155,7 @@ window.printTest = {
         template: (templateDesign as any).bands as Band[],
         data: enhancedSampleData,
         dataFields: testDataFields,
+        pageSettings: defaultPageSettings,
         fileName: '测试报表',
         download: true,
       });
@@ -169,6 +171,7 @@ window.printTest = {
       template: (templateDesign as any).bands as Band[],
       data: enhancedSampleData,
       dataFields: testDataFields,
+      pageSettings: defaultPageSettings,
     });
     console.log('✅ getPrintableHtml 结果:');
     console.log('  - HTML 文档长度:', html.length, '字符');
@@ -184,6 +187,7 @@ window.printTest = {
       template: (templateDesign as any).bands as Band[],
       data: enhancedSampleData,
       dataFields: testDataFields,
+      pageSettings: defaultPageSettings,
     });
     console.log('✅ 打印窗口已打开!');
   },
