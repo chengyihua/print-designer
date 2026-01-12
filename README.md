@@ -100,7 +100,7 @@ const printOptions = {
     template,           // 设计模板（带区数据）
     data: previewData,  // 业务数据
     dataFields,         // 数据字段定义
-    pageSettings,       // 页面设置（可选）
+    pageSettings,       // 页面设置（必填）
 };
 
 // 1. 渲染为 HTML 字符串
@@ -159,12 +159,8 @@ import { PrintPreview } from 'print-designer';
 | data | `Record<string, any>` | ✓ | - | 预览数据 |
 | dataFields | `DataField[]` | ✓ | - | 数据字段定义 |
 | onClose | `() => void` | ✓ | - | 关闭回调 |
-| pageWidth | `number` | | `794` | 页面宽度(px) |
-| pageHeight | `number` | | `1123` | 页面高度(px) |
-| pageMargins | `{ top, bottom, left, right }` | | `{ top: 40, bottom: 40, left: 40, right: 40 }` | 页边距(px) |
+| pageSettings | `PageSettings` | ✓ | - | 页面设置（纸张尺寸、边距、方向等） |
 | showPageNumbers | `boolean` | | `true` | 是否显示页码 |
-| paperWidthMm | `number` | | `210` | 纸张宽度(mm)，用于PDF导出 |
-| paperHeightMm | `number` | | `297` | 纸张高度(mm)，用于PDF导出 |
 
 ### 打印输出函数
 
@@ -179,10 +175,7 @@ const result = renderToHtml({
     template: Band[],        // 设计模板（带区数据）
     data: object,            // 业务数据
     dataFields?: DataField[],// 数据字段定义
-    pageSettings?: PageSettings, // 页面设置
-    pageWidth?: number,      // 页面宽度(px)，默认 794
-    pageHeight?: number,     // 页面高度(px)，默认 1123
-    pageMargins?: { top, bottom, left, right }, // 页边距(px)
+    pageSettings: PageSettings, // 页面设置（必填）
 });
 
 // 返回结果
@@ -205,7 +198,7 @@ await exportToPdf({
     template: Band[],        // 设计模板
     data: object,            // 业务数据
     dataFields?: DataField[],// 数据字段定义
-    pageSettings?: PageSettings, // 页面设置
+    pageSettings: PageSettings, // 页面设置（必填）
     fileName?: string,       // 文件名（不含扩展名），默认 '报表_日期'
     download?: boolean,      // 是否直接下载，默认 true
     scale?: number,          // 图片缩放比例，默认 2
@@ -226,7 +219,7 @@ const html = getPrintableHtml({
     template: Band[],
     data: object,
     dataFields?: DataField[],
-    pageSettings?: PageSettings,
+    pageSettings: PageSettings, // 页面设置（必填）
 });
 
 // 返回完整的 HTML 文档字符串（包含 DOCTYPE、打印样式等）
@@ -247,7 +240,7 @@ openPrintWindow({
     template: Band[],
     data: object,
     dataFields?: DataField[],
-    pageSettings?: PageSettings,
+    pageSettings: PageSettings, // 页面设置（必填）
 });
 // 会打开新窗口并自动调用 window.print()
 ```
