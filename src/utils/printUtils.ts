@@ -3,10 +3,10 @@
  * 提供独立的渲染和导出接口，无需进入设计器即可生成打印输出
  */
 
-import { Band, ControlObject, ControlObjectAll, DataField, PageSettings } from '../types/types';
+import { Band, ControlObject, ControlObjectAll, DataField, PageSettings, DesignData } from '../types/types';
 import { getObjectContent, getBaseObjectStyle } from './renderUtils';
 import { evaluateFormula } from './formulaUtils';
-import { getDetailDataKey } from '../types/constants';
+import { getDetailDataKey, defaultBands, defaultPageSettings } from '../types/constants';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import JsBarcode from 'jsbarcode';
@@ -16,14 +16,10 @@ import UnitConverter from './unitConverter';
 
 /** 打印配置选项 */
 export interface PrintOptions {
-    /** 设计模板（带区数据） */
-    template: Band[];
+    /** 设计数据（统一的 JSON 结构） */
+    design: DesignData;
     /** 业务数据 */
     data: any;
-    /** 数据字段定义（用于确定明细数据键名） */
-    dataFields?: DataField[];
-    /** 页面设置（从设计器传入） */
-    pageSettings: PageSettings;
 }
 
 /** PDF 导出选项 */
@@ -40,7 +36,7 @@ export interface PdfExportOptions extends PrintOptions {
  * 从 PrintOptions 获取实际的页面尺寸和边距
  */
 function getPageDimensions(options: PrintOptions) {
-    const { pageSettings } = options;
+    const pageSettings = options.design.pageSettings || defaultPageSettings;
     
     // 从 pageSettings 计算
     const widthMm = pageSettings.orientation === 'landscape' 
@@ -85,11 +81,9 @@ export interface RenderResult {
  * 计算分页信息
  */
 function calculatePagination(options: PrintOptions) {
-    const {
-        template,
-        data,
-        dataFields = [],
-    } = options;
+    const { design, data } = options;
+    const template = design.bands || defaultBands;
+    const dataFields = design.dataFields;
     
     const { pageHeight, pageMargins } = getPageDimensions(options);
 
@@ -400,11 +394,9 @@ function renderPage(
     pageNum: number,
     pagination: ReturnType<typeof calculatePagination>
 ): string {
-    const {
-        template,
-        data,
-        dataFields = [],
-    } = options;
+    const { design, data } = options;
+    const template = design.bands || defaultBands;
+    const dataFields = design.dataFields;
     
     const { pageWidth, pageHeight, pageMargins } = getPageDimensions(options);
 

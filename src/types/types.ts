@@ -123,6 +123,16 @@ export interface PageSettings {
     orientation: 'portrait' | 'landscape';
 }
 
+/** 设计数据（统一的 JSON 结构） */
+export interface DesignData {
+    /** 数据字段定义（必填） */
+    dataFields: DataField[];
+    /** 带区设计数据（可选，为空时使用默认带区） */
+    bands?: Band[];
+    /** 页面设置（可选，为空时使用默认 A4 设置） */
+    pageSettings?: PageSettings;
+}
+
 export interface BandBoundaryDesignerProps {
     options?: Partial<DesignerOptions>;
     initialDesign?: Band[];

@@ -9,15 +9,7 @@ import { marked } from 'marked';
 import { renderToHtml, exportToPdf, getPrintableHtml, openPrintWindow } from './utils/printUtils';
 import templateDesign from './temp.json';
 import enhancedSampleData from './enhancedSampleData.json';
-import type { Band, DataField, PageSettings } from './types/types';
-
-// 设计数据类型
-interface DesignData {
-  bands?: Band[];
-  pageSettings?: PageSettings;
-  version?: string;
-  createdAt?: string;
-}
+import type { Band, DataField, PageSettings, DesignData } from './types/types';
 
 // 默认页面设置 (A4 纸张)
 const defaultPageSettings: PageSettings = {
@@ -78,7 +70,11 @@ async function loadDesign(): Promise<DesignData> {
   }
   
   // 回退到默认模板
-  return templateDesign as DesignData;
+  return {
+    dataFields: testDataFields,
+    bands: (templateDesign as any).bands,
+    pageSettings: defaultPageSettings,
+  };
 }
 
 /**
@@ -134,10 +130,12 @@ window.printTest = {
   // 测试渲染为 HTML
   renderToHtml: () => {
     const result = renderToHtml({
-      template: (templateDesign as any).bands as Band[],
+      design: {
+        dataFields: testDataFields,
+        bands: (templateDesign as any).bands as Band[],
+        pageSettings: defaultPageSettings,
+      },
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: defaultPageSettings,
     });
     console.log('✅ renderToHtml 结果:');
     console.log('  - 总页数:', result.totalPages);
@@ -152,10 +150,12 @@ window.printTest = {
     console.log('⏳ 正在导出 PDF...');
     try {
       await exportToPdf({
-        template: (templateDesign as any).bands as Band[],
+        design: {
+          dataFields: testDataFields,
+          bands: (templateDesign as any).bands as Band[],
+          pageSettings: defaultPageSettings,
+        },
         data: enhancedSampleData,
-        dataFields: testDataFields,
-        pageSettings: defaultPageSettings,
         fileName: '测试报表',
         download: true,
       });
@@ -168,10 +168,12 @@ window.printTest = {
   // 测试获取可打印 HTML
   getPrintableHtml: () => {
     const html = getPrintableHtml({
-      template: (templateDesign as any).bands as Band[],
+      design: {
+        dataFields: testDataFields,
+        bands: (templateDesign as any).bands as Band[],
+        pageSettings: defaultPageSettings,
+      },
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: defaultPageSettings,
     });
     console.log('✅ getPrintableHtml 结果:');
     console.log('  - HTML 文档长度:', html.length, '字符');
@@ -184,10 +186,12 @@ window.printTest = {
   openPrintWindow: () => {
     console.log('⏳ 正在打开打印窗口...');
     openPrintWindow({
-      template: (templateDesign as any).bands as Band[],
+      design: {
+        dataFields: testDataFields,
+        bands: (templateDesign as any).bands as Band[],
+        pageSettings: defaultPageSettings,
+      },
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: defaultPageSettings,
     });
     console.log('✅ 打印窗口已打开!');
   },
@@ -225,15 +229,16 @@ const PrintTestPanel: React.FC = () => {
   }, []);
 
   // 获取当前设计数据
-  const getCurrentTemplate = () => design?.bands || (templateDesign as DesignData).bands || [];
-  const getCurrentPageSettings = () => design?.pageSettings || defaultPageSettings;
+  const getCurrentDesign = (): DesignData => ({
+    dataFields: testDataFields,
+    bands: design?.bands || (templateDesign as any).bands,
+    pageSettings: design?.pageSettings || defaultPageSettings,
+  });
 
   const handleRenderHtml = () => {
     const result = renderToHtml({
-      template: getCurrentTemplate() as Band[],
+      design: getCurrentDesign(),
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: getCurrentPageSettings(),
     });
     // 在新窗口中显示 HTML 渲染结果
     const win = window.open('', '_blank');
@@ -293,10 +298,8 @@ const PrintTestPanel: React.FC = () => {
   const handleExportPdf = async () => {
     console.log('⏳ 正在导出 PDF...');
     await exportToPdf({
-      template: getCurrentTemplate() as Band[],
+      design: getCurrentDesign(),
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: getCurrentPageSettings(),
       fileName: '测试报表',
     });
     console.log('✅ PDF 导出成功!');
@@ -304,19 +307,15 @@ const PrintTestPanel: React.FC = () => {
 
   const handleOpenPrintWindow = () => {
     openPrintWindow({
-      template: getCurrentTemplate() as Band[],
+      design: getCurrentDesign(),
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: getCurrentPageSettings(),
     });
   };
 
   const handlePreviewHtml = () => {
     const html = getPrintableHtml({
-      template: getCurrentTemplate() as Band[],
+      design: getCurrentDesign(),
       data: enhancedSampleData,
-      dataFields: testDataFields,
-      pageSettings: getCurrentPageSettings(),
     });
     // 在新窗口中预览 HTML
     const win = window.open('', '_blank');

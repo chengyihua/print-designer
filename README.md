@@ -90,17 +90,13 @@ import {
     openPrintWindow 
 } from 'print-designer';
 
-// 从存储加载设计模板
+// 从存储加载设计数据
 const savedDesign = JSON.parse(localStorage.getItem('design') || '{}');
-const template = savedDesign.bands;
-const pageSettings = savedDesign.pageSettings;
 
-// 打印配置
+// 打印配置（统一的 JSON 结构）
 const printOptions = {
-    template,           // 设计模板（带区数据）
-    data: previewData,  // 业务数据
-    dataFields,         // 数据字段定义
-    pageSettings,       // 页面设置（必填）
+    design: savedDesign,   // 设计数据（包含 dataFields, bands, pageSettings）
+    data: previewData,     // 业务数据
 };
 
 // 1. 渲染为 HTML 字符串
@@ -172,10 +168,8 @@ import { PrintPreview } from 'print-designer';
 import { renderToHtml } from 'print-designer';
 
 const result = renderToHtml({
-    template: Band[],        // 设计模板（带区数据）
+    design: DesignData,      // 设计数据（统一 JSON）
     data: object,            // 业务数据
-    dataFields?: DataField[],// 数据字段定义
-    pageSettings: PageSettings, // 页面设置（必填）
 });
 
 // 返回结果
@@ -195,10 +189,8 @@ console.log(result.paperHeightMm);// 纸张高度(mm)
 import { exportToPdf } from 'print-designer';
 
 await exportToPdf({
-    template: Band[],        // 设计模板
+    design: DesignData,      // 设计数据
     data: object,            // 业务数据
-    dataFields?: DataField[],// 数据字段定义
-    pageSettings: PageSettings, // 页面设置（必填）
     fileName?: string,       // 文件名（不含扩展名），默认 '报表_日期'
     download?: boolean,      // 是否直接下载，默认 true
     scale?: number,          // 图片缩放比例，默认 2
@@ -216,10 +208,8 @@ const pdfBlob = await exportToPdf({ ...options, download: false });
 import { getPrintableHtml } from 'print-designer';
 
 const html = getPrintableHtml({
-    template: Band[],
-    data: object,
-    dataFields?: DataField[],
-    pageSettings: PageSettings, // 页面设置（必填）
+    design: DesignData,      // 设计数据
+    data: object,            // 业务数据
 });
 
 // 返回完整的 HTML 文档字符串（包含 DOCTYPE、打印样式等）
@@ -237,15 +227,25 @@ const html = getPrintableHtml({
 import { openPrintWindow } from 'print-designer';
 
 openPrintWindow({
-    template: Band[],
-    data: object,
-    dataFields?: DataField[],
-    pageSettings: PageSettings, // 页面设置（必填）
+    design: DesignData,      // 设计数据
+    data: object,            // 业务数据
 });
 // 会打开新窗口并自动调用 window.print()
 ```
 
 ## 类型定义
+
+### DesignData
+
+设计数据（统一的 JSON 结构）。
+
+```typescript
+interface DesignData {
+    dataFields: DataField[];           // 数据字段定义（必填）
+    bands?: Band[];                    // 带区设计数据（可选，为空时使用默认带区）
+    pageSettings?: PageSettings;       // 页面设置（可选，为空时使用默认 A4 设置）
+}
+```
 
 ### DataField
 
