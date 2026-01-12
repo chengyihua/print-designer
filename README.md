@@ -95,8 +95,9 @@ const savedDesign = JSON.parse(localStorage.getItem('design') || '{}');
 
 // 打印配置（统一的 JSON 结构）
 const printOptions = {
-    design: savedDesign,   // 设计数据（包含 dataFields, bands, pageSettings）
+    design: savedDesign,   // 设计数据（包含 bands, pageSettings）
     data: previewData,     // 业务数据
+    dataFields,            // 数据字段定义（必填）
 };
 
 // 1. 渲染为 HTML 字符串
@@ -168,8 +169,9 @@ import { PrintPreview } from 'print-designer';
 import { renderToHtml } from 'print-designer';
 
 const result = renderToHtml({
-    design: DesignData,      // 设计数据（统一 JSON）
+    design: DesignData,      // 设计数据（bands, pageSettings）
     data: object,            // 业务数据
+    dataFields: DataField[], // 数据字段定义（必填）
 });
 
 // 返回结果
@@ -191,6 +193,7 @@ import { exportToPdf } from 'print-designer';
 await exportToPdf({
     design: DesignData,      // 设计数据
     data: object,            // 业务数据
+    dataFields: DataField[], // 数据字段定义（必填）
     fileName?: string,       // 文件名（不含扩展名），默认 '报表_日期'
     download?: boolean,      // 是否直接下载，默认 true
     scale?: number,          // 图片缩放比例，默认 2
@@ -210,6 +213,7 @@ import { getPrintableHtml } from 'print-designer';
 const html = getPrintableHtml({
     design: DesignData,      // 设计数据
     data: object,            // 业务数据
+    dataFields: DataField[], // 数据字段定义（必填）
 });
 
 // 返回完整的 HTML 文档字符串（包含 DOCTYPE、打印样式等）
@@ -229,6 +233,7 @@ import { openPrintWindow } from 'print-designer';
 openPrintWindow({
     design: DesignData,      // 设计数据
     data: object,            // 业务数据
+    dataFields: DataField[], // 数据字段定义（必填）
 });
 // 会打开新窗口并自动调用 window.print()
 ```
@@ -241,7 +246,6 @@ openPrintWindow({
 
 ```typescript
 interface DesignData {
-    dataFields: DataField[];           // 数据字段定义（必填）
     bands?: Band[];                    // 带区设计数据（可选，为空时使用默认带区）
     pageSettings?: PageSettings;       // 页面设置（可选，为空时使用默认 A4 设置）
 }

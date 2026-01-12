@@ -20,6 +20,8 @@ export interface PrintOptions {
     design: DesignData;
     /** 业务数据 */
     data: any;
+    /** 数据字段定义（必填，用于确定明细数据键名） */
+    dataFields: DataField[];
 }
 
 /** PDF 导出选项 */
@@ -81,9 +83,8 @@ export interface RenderResult {
  * 计算分页信息
  */
 function calculatePagination(options: PrintOptions) {
-    const { design, data } = options;
+    const { design, data, dataFields } = options;
     const template = design.bands || defaultBands;
-    const dataFields = design.dataFields;
     
     const { pageHeight, pageMargins } = getPageDimensions(options);
 
@@ -394,9 +395,8 @@ function renderPage(
     pageNum: number,
     pagination: ReturnType<typeof calculatePagination>
 ): string {
-    const { design, data } = options;
+    const { design, data, dataFields } = options;
     const template = design.bands || defaultBands;
-    const dataFields = design.dataFields;
     
     const { pageWidth, pageHeight, pageMargins } = getPageDimensions(options);
 
